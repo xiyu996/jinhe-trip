@@ -55,8 +55,8 @@
       "vehicles": [
         {
           "name": "默认车行",
-          "adults": "",
-          "children": ""
+          "adults": "10",
+          "children": "1"
         }
       ],
       "waypoints": [
