@@ -621,7 +621,7 @@
     }
 
     window.addEventListener('beforeunload', () => flushStore());
-    _refreshTimer = setInterval(() => refreshFromServer(true), 12000);
+    _refreshTimer = setInterval(() => refreshFromServer(true), 3000);
 
     // ================================================================
     //  工具：为烧烤桌动态计算座位坐标（上/下错开布局）
