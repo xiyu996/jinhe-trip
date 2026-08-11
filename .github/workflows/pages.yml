@@ -20,9 +20,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Inject GitHub Token
+      - name: Inject GitHub Token (Python, preserves UTF-8)
         run: |
-          sed -i "s/__GH_TOKEN__/${{ secrets.GH_PAGES_TOKEN }}/g" index.html
+          python3 -c "
+import sys
+with open('index.html', 'r', encoding='utf-8') as f:
+    content = f.read()
+content = content.replace('__GH_TOKEN__', '${{ secrets.GH_PAGES_TOKEN }}')
+with open('index.html', 'w', encoding='utf-8') as f:
+    f.write(content)
+# Verify encoding
+with open('index.html', 'rb') as f:
+    data = f.read()
+# Quick UTF-8 validation
+data.decode('utf-8')
+print('UTF-8 encoding verified OK')
+"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
