@@ -535,11 +535,10 @@
     let _dataHash = '';
     let _dataDirty = false;
     let _saveTimer = null;
-    let _refreshTimer = null;
     let _apiRefreshTimer = null;
     let _saving = false;
+    let _polling = false;    // 防止 API 验证重叠
     let _localEdits = false; // 是否有未保存的本地编辑
-    let _saveCooldown = 0;   // 保存后 CDN 冷却期（CDN 部署有延迟，冷却期内跳过 CDN 轮询）
     // 按页签追踪脏数据
     let _dirtyBbq = false, _dirtyHike = false, _dirtyLunch = false;
 
@@ -668,7 +667,6 @@
             _dataSha = j.content.sha;
             _dataHash = hash(JSON.stringify(_dataCache));
             _dataDirty = false;
-            _saveCooldown = Date.now() + 60000;
             clearLocalEdits(section); // 只清除当前页签的脏标记
             showToast('💾 已保存到云端');
         } else {
@@ -679,38 +677,19 @@
 
     // ★ 智能合并：远端更新时只刷新用户未编辑的页签，保护本地修改
     function mergeRemotePreservingLocal(remote) {
-        // 只更新用户未编辑过的页签，保护正在编辑的本地数据
         if (!_dirtyBbq) { applyBbqFromStore(remote); }
         if (!_dirtyHike) { applyHikeFromStore(remote); }
         if (!_dirtyLunch) { applyLunchFromStore(remote); }
         renderBbq(); renderHike(); renderLunch();
     }
 
-    async function refreshFromServer(quiet) {
-        if (_dataDirty || _saving) return;
-        if (Date.now() < _saveCooldown) return; // 保存后 CDN 可能还是旧数据，冷却期内跳过
-        try {
-            const r = await fetch(GH_RAW, { cache: 'no-cache' });
-            if (!r.ok) return;
-            const raw = await r.text();
-            const h = hash(raw);
-            if (h !== _dataHash) {
-                const remote = JSON.parse(raw);
-                _dataCache = remote;
-                _dataHash = h;
-                _dataSha = null; // CDN 不带 SHA，下次保存时会从 API 获取
-                mergeRemotePreservingLocal(remote);
-                if (!quiet) showToast(_localEdits ? '🔄 已同步远端更新（你的编辑已保留）' : '🔄 检测到他人更新，已同步');
-            }
-        } catch(e) {}
-    }
-
-    // ★ API 轮询：直接读仓库，无 CDN 延迟，SHA 比对精准
-    async function refreshFromApi(quiet) {
-        if (_dataDirty || _saving) return;
+    // ★ 核心：用 API（SHA 比对）验证并应用远端变更（权威，不会回退）
+    async function verifyAndApply(quiet) {
+        if (_dataDirty || _saving || _polling) return;
+        _polling = true;
         try {
             const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
-            if (!r.ok) return;
+            if (!r.ok) { _polling = false; return; }
             const j = await r.json();
             if (j.sha !== _dataSha) {
                 const raw = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ''))));
@@ -719,16 +698,31 @@
                 _dataSha = j.sha;
                 _dataHash = hash(JSON.stringify(remote));
                 mergeRemotePreservingLocal(remote);
-                if (!quiet) showToast(_localEdits ? '🔄 已同步远端更新（你的编辑已保留）' : '🔄 检测到他人更新，已同步');
+                if (!quiet) showToast(_localEdits ? '🔄 已同步（你的编辑已保留）' : '🔄 已同步远端更新');
+            }
+        } catch(e) {}
+        _polling = false;
+    }
+
+    // CDN 快速嗅探：检测到 hash 变化 → 触发 API 验证
+    async function cdnSniff() {
+        if (_dataDirty || _saving) return;
+        try {
+            const r = await fetch(GH_RAW, { cache: 'no-cache' });
+            if (!r.ok) return;
+            const raw = await r.text();
+            if (hash(raw) !== _dataHash) {
+                // CDN 发现变化 → 用 API 确认（避免 CDN 旧数据导致回退）
+                verifyAndApply(true);
             }
         } catch(e) {}
     }
 
     window.addEventListener('beforeunload', () => flushStore());
-    // CDN 轮询：3 秒一次快速检测（Pages 有 30-60s 部署延迟时可能检测不到）
-    _refreshTimer = setInterval(() => refreshFromServer(true), 2000);
-    // API 轮询：5 秒一次权威检查（直接读仓库，无 CDN 延迟，SHA 比对精准）
-    _apiRefreshTimer = setInterval(() => refreshFromApi(true), 5000);
+    // CDN 嗅探：2 秒一次，检测到变化立即触发 API 验证（无频率限制）
+    setInterval(cdnSniff, 2000);
+    // API 兜底轮询：15 秒一次，确保即使 CDN 漏检也能同步
+    _apiRefreshTimer = setInterval(() => verifyAndApply(true), 15000);
 
     // ================================================================
     //  工具：为烧烤桌动态计算座位坐标（上/下错开布局）
