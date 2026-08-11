@@ -677,18 +677,30 @@
         _saving = false;
     }
 
+    // ★ 智能合并：远端更新时只刷新用户未编辑的页签，保护本地修改
+    function mergeRemotePreservingLocal(remote) {
+        // 只更新用户未编辑过的页签，保护正在编辑的本地数据
+        if (!_dirtyBbq) { applyBbqFromStore(remote); }
+        if (!_dirtyHike) { applyHikeFromStore(remote); }
+        if (!_dirtyLunch) { applyLunchFromStore(remote); }
+        renderBbq(); renderHike(); renderLunch();
+    }
+
     async function refreshFromServer(quiet) {
         if (_dataDirty || _saving) return;
         if (Date.now() < _saveCooldown) return; // 保存后 CDN 可能还是旧数据，冷却期内跳过
-        if (_localEdits) { if (!quiet) showToast('📝 有未保存的编辑，请先保存'); return; }
         try {
             const r = await fetch(GH_RAW, { cache: 'no-cache' });
             if (!r.ok) return;
             const raw = await r.text();
             const h = hash(raw);
             if (h !== _dataHash) {
-                showToast('🔄 检测到他人更新，刷新页面...');
-                setTimeout(() => location.reload(), 500);
+                const remote = JSON.parse(raw);
+                _dataCache = remote;
+                _dataHash = h;
+                _dataSha = null; // CDN 不带 SHA，下次保存时会从 API 获取
+                mergeRemotePreservingLocal(remote);
+                if (!quiet) showToast(_localEdits ? '🔄 已同步远端更新（你的编辑已保留）' : '🔄 检测到他人更新，已同步');
             }
         } catch(e) {}
     }
@@ -696,14 +708,18 @@
     // ★ API 轮询：直接读仓库，无 CDN 延迟，SHA 比对精准
     async function refreshFromApi(quiet) {
         if (_dataDirty || _saving) return;
-        if (_localEdits) { if (!quiet) showToast('📝 有未保存的编辑，请先保存'); return; }
         try {
             const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
             if (!r.ok) return;
             const j = await r.json();
             if (j.sha !== _dataSha) {
-                showToast('🔄 检测到他人更新，刷新页面...');
-                setTimeout(() => location.reload(), 500);
+                const raw = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ''))));
+                const remote = JSON.parse(raw);
+                _dataCache = remote;
+                _dataSha = j.sha;
+                _dataHash = hash(JSON.stringify(remote));
+                mergeRemotePreservingLocal(remote);
+                if (!quiet) showToast(_localEdits ? '🔄 已同步远端更新（你的编辑已保留）' : '🔄 检测到他人更新，已同步');
             }
         } catch(e) {}
     }
