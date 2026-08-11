@@ -67,10 +67,10 @@
   "hike": [
     {
       "id": 1,
-      "name": "神瀑沟经典路线",
+      "name": "A路线",
       "summary": {
-        "distance": "8.6 km",
-        "time": "4.5 小时",
+        "distance": "9.7km",
+        "time": "4-6小时",
         "difficulty": "中等"
       },
       "vehicles": [
@@ -83,9 +83,9 @@
       "waypoints": [
         {
           "type": "start",
-          "time": "08:00",
+          "time": "09:30",
           "title": "集合出发",
-          "desc": "在神瀑沟景区门口集合，清点人数、分发物资。领队讲解路线要点与安全须知，做热身拉伸。",
+          "desc": "在神瀑沟景区门口集合，清点人数、分发物资，做热身拉伸。",
           "dist": "0 km",
           "badges": []
         },
@@ -163,6 +163,74 @@
           "title": "返回景区入口 · 活动结束",
           "desc": "安全返回神瀑沟景区入口。简单拉伸放松，统计人数后前往餐厅。恭喜完成本次徒步！🏅",
           "dist": "8.6 km",
+          "badges": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "B路线",
+      "summary": {
+        "distance": "3.8km",
+        "time": "1-2小时",
+        "difficulty": "简单"
+      },
+      "vehicles": [
+        {
+          "name": "新车行",
+          "adults": "",
+          "children": ""
+        }
+      ],
+      "waypoints": [
+        {
+          "type": "start",
+          "time": "08:00",
+          "title": "起点",
+          "desc": "",
+          "dist": "0 km",
+          "badges": []
+        },
+        {
+          "type": "end",
+          "time": "12:00",
+          "title": "终点",
+          "desc": "",
+          "dist": "0 km",
+          "badges": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "不参加徒步",
+      "summary": {
+        "distance": "0 km",
+        "time": "0 小时",
+        "difficulty": "简单"
+      },
+      "vehicles": [
+        {
+          "name": "新车行",
+          "adults": "",
+          "children": ""
+        }
+      ],
+      "waypoints": [
+        {
+          "type": "start",
+          "time": "08:00",
+          "title": "起点",
+          "desc": "",
+          "dist": "0 km",
+          "badges": []
+        },
+        {
+          "type": "end",
+          "time": "12:00",
+          "title": "终点",
+          "desc": "",
+          "dist": "0 km",
           "badges": []
         }
       ]
