@@ -544,7 +544,7 @@
             const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
             if (r.ok) {
                 const j = await r.json();
-                const raw = atob(j.content.replace(/\s/g, ''));
+                const raw = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ''))));
                 _dataSha = j.sha;
                 _dataCache = JSON.parse(raw);
                 _dataHash = hash(JSON.stringify(_dataCache));
