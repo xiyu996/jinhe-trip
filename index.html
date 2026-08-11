@@ -694,8 +694,8 @@
     }
     let bbqNextId = bbqData.length ? Math.max(...bbqData.map(t => t.id)) + 1 : 1;
 
-    function saveBbqData() {
-        const store = loadStore();
+    async function saveBbqData() {
+        const store = await loadStore();
         store.bbq = bbqData;
         saveStore(store);
     }
@@ -1053,8 +1053,8 @@
     let hikeNextId = hikeData.length ? Math.max(...hikeData.map(r => r.id)) + 1 : 1;
     let hikeCurrentId = hikeData.length ? hikeData[0].id : 1;
 
-    function saveHikeData() {
-        const store = loadStore();
+    async function saveHikeData() {
+        const store = await loadStore();
         store.hike = hikeData;
         saveStore(store);
     }
@@ -1359,8 +1359,8 @@
     }
     let lunchNextId = lunchData.length ? Math.max(...lunchData.map(t => t.id)) + 1 : 1;
 
-    function saveLunchData() {
-        const store = loadStore();
+    async function saveLunchData() {
+        const store = await loadStore();
         store.lunch = lunchData;
         saveStore(store);
     }
