@@ -423,6 +423,7 @@
         <button class="tab-btn active" data-tab="tab-bbq"><span class="tab-icon">🍖</span> 烧烤座位安排</button>
         <button class="tab-btn" data-tab="tab-hike"><span class="tab-icon">🥾</span> 徒步路线方案</button>
         <button class="tab-btn" data-tab="tab-lunch"><span class="tab-icon">🍽️</span> 中餐座位安排</button>
+        <span id="dirtyBadge" style="display:none;margin-left:12px;padding:3px 10px;background:#F4A261;color:#fff;border-radius:12px;font-size:12px;font-weight:700;align-self:center;">未保存</span>
     </div>
 
     <!-- ===== 页签一：烧烤（长方形 SVG，人数不固定，上下错开） ===== -->
@@ -536,6 +537,20 @@
     let _refreshTimer = null;
     let _apiRefreshTimer = null;
     let _saving = false;
+    let _localEdits = false; // 是否有未保存的本地编辑
+
+    function markLocalEdit() { _localEdits = true; updateDirtyBadge(); }
+    function clearLocalEdits() { _localEdits = false; updateDirtyBadge(); }
+    function updateDirtyBadge() {
+        const badge = document.getElementById('dirtyBadge');
+        if (!badge) return;
+        badge.style.display = _localEdits ? 'inline-block' : 'none';
+        // 更新页签上的保存按钮文字提示
+        ['bbqSaveBtn','hikeSaveBtn','lunchSaveBtn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.textContent = _localEdits ? '💾 保存 *' : '💾 保存';
+        });
+    }
 
     function hash(s) { let h=0; for(let i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h|=0;} return String(h); }
 
@@ -635,6 +650,7 @@
             _dataSha = j.content.sha;
             _dataHash = hash(JSON.stringify(_dataCache));
             _dataDirty = false;
+            clearLocalEdits();
             showToast('💾 已保存到云端');
         } else {
             showToast('⚠️ 保存失败 HTTP ' + res.status);
@@ -644,6 +660,7 @@
 
     async function refreshFromServer(quiet) {
         if (_dataDirty || _saving) return;
+        if (_localEdits) { if (!quiet) showToast('📝 有未保存的编辑，请先保存'); return; }
         try {
             const r = await fetch(GH_RAW, { cache: 'no-cache' });
             if (!r.ok) return;
@@ -667,6 +684,7 @@
     // ★ 新增：直接轮询 API（无 CDN 延迟，12 秒一次作为权威检查）
     async function refreshFromApi(quiet) {
         if (_dataDirty || _saving) return;
+        if (_localEdits) { if (!quiet) showToast('📝 有未保存的编辑，请先保存'); return; }
         try {
             const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
             if (!r.ok) return;
@@ -766,6 +784,8 @@
     async function saveBbqData() {
         const store = await loadStore();
         store.bbq = bbqData;
+        store.hike = hikeData;
+        store.lunch = lunchData;
         saveStore(store);
     }
 
@@ -925,7 +945,7 @@
                 const removed = table.seats[seatIdx];
                 if (confirm(`移除 "${removed}" 从烧烤桌 ${tableId} ${positions[seatIdx].label}？`)) {
                     table.seats[seatIdx] = '';
-                    saveBbqData();
+                    markLocalEdit();
                     renderBbq();
                     showToast(`已移除 "${removed}"`);
                 }
@@ -942,7 +962,7 @@
                 if (!table) return;
                 const removed = table.seats[seatIdx];
                 table.seats[seatIdx] = '';
-                saveBbqData();
+                markLocalEdit();
                 renderBbq();
                 showToast(`已移除 "${removed}"`);
             };
@@ -955,7 +975,7 @@
                 if (bbqData.length <= 1) { showToast('至少保留一桌'); return; }
                 if (!confirm(`删除烧烤桌 ${tableId}？`)) return;
                 bbqData = bbqData.filter(t => t.id !== tableId);
-                saveBbqData();
+                markLocalEdit();
                 renderBbq();
                 showToast(`已删除烧烤桌 ${tableId}`);
             };
@@ -1024,7 +1044,7 @@
             if (ni >= 0) newSeats[ni] = oldSeats[oi];
         }
         table.seats = newSeats;
-        saveBbqData();
+        markLocalEdit();
         renderBbq();
         const sideNames = { top: '上排', bottom: '下排', left: '左侧', right: '右侧' };
         showToast(`烧烤桌 ${tableId} ${sideNames[side]} → ${newVal} 座`);
@@ -1046,7 +1066,7 @@
         }
         table.seats[seatIdx] = name;
         input.value = '';
-        saveBbqData();
+        markLocalEdit();
         renderBbq();
         showToast(`已安排 "${name}" 到烧烤桌 ${tableId} ${positions[seatIdx].label}`);
     });
@@ -1070,7 +1090,7 @@
         const cfg = { ...DEFAULT_BBQ_CONFIG };
         const total = totalSeats(cfg);
         bbqData.push({ id: bbqNextId++, config: cfg, seats: new Array(total).fill('') });
-        saveBbqData();
+        markLocalEdit();
         renderBbq();
         showToast(`已添加烧烤桌 ${bbqNextId - 1}`);
     });
@@ -1078,7 +1098,7 @@
         if (confirm('重置为默认烧烤座位？')) {
             bbqData = JSON.parse(JSON.stringify(BBQ_DEFAULT));
             bbqNextId = bbqData.length ? Math.max(...bbqData.map(t => t.id)) + 1 : 1;
-            saveBbqData();
+            markLocalEdit();
             renderBbq();
             showToast('已重置默认');
         }
@@ -1124,7 +1144,9 @@
 
     async function saveHikeData() {
         const store = await loadStore();
+        store.bbq = bbqData;
         store.hike = hikeData;
+        store.lunch = lunchData;
         saveStore(store);
     }
     function getCurrentRoute() { return hikeData.find(r => r.id === hikeCurrentId) || hikeData[0]; }
@@ -1190,7 +1212,7 @@
                 if (!route || route.waypoints.length <= 2) { showToast('至少保留起点和终点'); return; }
                 if (!confirm(`删除"${route.waypoints[idx].title}"？`)) return;
                 route.waypoints.splice(idx, 1);
-                saveHikeData(); renderHike();
+                markLocalEdit(); renderHike();
                 showToast('已删除途经点');
             };
         });
@@ -1300,7 +1322,7 @@
                 time: document.getElementById('emTime').value.trim() || s.time,
                 difficulty: document.getElementById('emDiff').value.trim() || s.difficulty
             };
-            saveHikeData(); renderHike();
+            markLocalEdit(); renderHike();
             document.getElementById('hikeModal').classList.remove('show');
             showToast('路线方案已更新');
         };
@@ -1310,7 +1332,7 @@
             hikeData = hikeData.filter(r => r.id !== route.id);
             if (hikeData.length === 0) { hikeData = JSON.parse(JSON.stringify(HIKE_DEFAULT)); hikeNextId = 2; }
             hikeCurrentId = hikeData[0].id;
-            saveHikeData(); renderHike();
+            markLocalEdit(); renderHike();
             document.getElementById('hikeModal').classList.remove('show');
             showToast('方案已删除');
         };
@@ -1330,7 +1352,7 @@
         };
         hikeData.push(newRoute);
         hikeCurrentId = newRoute.id;
-        saveHikeData(); renderHike();
+        markLocalEdit(); renderHike();
         showToast('已添加新路线方案');
     });
 
@@ -1342,7 +1364,7 @@
         route.waypoints.splice(insertAt, 0, {
             type: 'waypoint', time: '', title: '新途经点', desc: '', dist: '', badges: []
         });
-        saveHikeData(); renderHike();
+        markLocalEdit(); renderHike();
         openWaypointModal(insertAt);
     });
 
@@ -1383,7 +1405,7 @@
             
             const bs = document.getElementById('wmBadges').value.trim();
             wp.badges = bs ? bs.split(',').map(s => { const [text,cls] = s.split(':'); return {text:text.trim(),cls:(cls||'rest').trim()}; }) : [];
-            saveHikeData(); renderHike();
+            markLocalEdit(); renderHike();
             document.getElementById('hikeModal').classList.remove('show');
             showToast('途经点已更新');
         };
@@ -1403,7 +1425,7 @@
             hikeData = JSON.parse(JSON.stringify(HIKE_DEFAULT));
             hikeNextId = hikeData.length ? Math.max(...hikeData.map(r=>r.id))+1 : 1;
             hikeCurrentId = hikeData[0].id;
-            saveHikeData(); renderHike();
+            markLocalEdit(); renderHike();
             showToast('已重置默认');
         }
     });
@@ -1430,6 +1452,8 @@
 
     async function saveLunchData() {
         const store = await loadStore();
+        store.bbq = bbqData;
+        store.hike = hikeData;
         store.lunch = lunchData;
         saveStore(store);
     }
@@ -1514,7 +1538,7 @@
                 const removed = table.seats[parseInt(this.dataset.seat)];
                 if (confirm(`移除 "${removed}" 从圆桌 ${this.dataset.table} 座位 ${parseInt(this.dataset.seat)+1}？`)) {
                     table.seats[parseInt(this.dataset.seat)] = '';
-                    saveLunchData(); renderLunch();
+                    markLocalEdit(); renderLunch();
                     showToast(`已移除 "${removed}"`);
                 }
             };
@@ -1526,7 +1550,7 @@
                 if (!table) return;
                 const removed = table.seats[parseInt(this.dataset.seat)];
                 table.seats[parseInt(this.dataset.seat)] = '';
-                saveLunchData(); renderLunch();
+                markLocalEdit(); renderLunch();
                 showToast(`已移除 "${removed}"`);
             };
         });
@@ -1536,7 +1560,7 @@
                 if (lunchData.length <= 1) { showToast('至少保留一桌'); return; }
                 if (!confirm(`删除圆桌 ${tableId}？`)) return;
                 lunchData = lunchData.filter(t => t.id !== tableId);
-                saveLunchData(); renderLunch();
+                markLocalEdit(); renderLunch();
                 showToast(`已删除圆桌 ${tableId}`);
             };
         });
@@ -1556,20 +1580,20 @@
         }
         table.seats[seatIdx] = name;
         input.value = '';
-        saveLunchData(); renderLunch();
+        markLocalEdit(); renderLunch();
         showToast(`已安排 "${name}" 到圆桌 ${tableId} 座位 ${seatIdx+1}`);
     });
     document.getElementById('lunchPersonInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lunchAddPersonBtn').click(); });
     document.getElementById('lunchAddTableBtn').addEventListener('click', () => {
         lunchData.push({ id: lunchNextId++, seats: new Array(SEATS_PER_TABLE).fill('') });
-        saveLunchData(); renderLunch();
+        markLocalEdit(); renderLunch();
         showToast(`已添加圆桌 ${lunchNextId-1}`);
     });
     document.getElementById('lunchResetBtn').addEventListener('click', () => {
         if (confirm('重置为默认中餐座位？')) {
             lunchData = JSON.parse(JSON.stringify(LUNCH_DEFAULT));
             lunchNextId = lunchData.length ? Math.max(...lunchData.map(t => t.id)) + 1 : 1;
-            saveLunchData(); renderLunch();
+            markLocalEdit(); renderLunch();
             showToast('已重置默认');
         }
     });
