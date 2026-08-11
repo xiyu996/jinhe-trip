@@ -424,6 +424,7 @@
         <button class="tab-btn" data-tab="tab-hike"><span class="tab-icon">🥾</span> 徒步路线方案</button>
         <button class="tab-btn" data-tab="tab-lunch"><span class="tab-icon">🍽️</span> 中餐座位安排</button>
         <span id="dirtyBadge" style="display:none;margin-left:12px;padding:3px 10px;background:#F4A261;color:#fff;border-radius:12px;font-size:12px;font-weight:700;align-self:center;">未保存</span>
+        <button id="saveAllBtn" class="btn btn-primary" style="margin-left:auto;padding:6px 18px;font-size:14px;">📤 全部提交</button>
     </div>
 
     <!-- ===== 页签一：烧烤（长方形 SVG，人数不固定，上下错开） ===== -->
@@ -550,7 +551,8 @@
         updateDirtyBadge();
     }
     function clearLocalEdits(section) {
-        if (section === 'bbq') _dirtyBbq = false;
+        if (!section) { _dirtyBbq = _dirtyHike = _dirtyLunch = false; } // 全部清除
+        else if (section === 'bbq') _dirtyBbq = false;
         else if (section === 'hike') _dirtyHike = false;
         else if (section === 'lunch') _dirtyLunch = false;
         _localEdits = _dirtyBbq || _dirtyHike || _dirtyLunch;
@@ -1470,6 +1472,20 @@
         return saveStore(store, 'lunch');
     }
 
+    // ★ 全部提交：保存三个页签的所有数据
+    async function saveAll() {
+        if (!_dirtyBbq && !_dirtyHike && !_dirtyLunch) {
+            showToast('✅ 没有需要保存的修改');
+            return;
+        }
+        const store = await loadStore();
+        store.bbq = bbqData;
+        store.hike = hikeData;
+        store.lunch = lunchData;
+        _dataCache = store; _dataDirty = true;
+        return flushStore(); // 不传 section = 合并全部
+    }
+
     function getRoundSeatCoords(count) {
         const positions = [];
         const cx = 150, cy = 150, seatDistance = 92;
@@ -1612,6 +1628,9 @@
     document.getElementById('lunchSaveBtn').addEventListener('click', () => {
         saveLunchData(); showToast('✅ 中餐座位已保存');
     });
+
+    // 全部提交按钮
+    document.getElementById('saveAllBtn').addEventListener('click', () => saveAll());
 
     // ================================================================
     //  初始化（从服务端加载数据）
