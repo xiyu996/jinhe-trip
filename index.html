@@ -534,12 +534,13 @@
     let _dataDirty = false;
     let _saveTimer = null;
     let _refreshTimer = null;
+    let _apiRefreshTimer = null;
     let _saving = false;
 
     function hash(s) { let h=0; for(let i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h|=0;} return String(h); }
 
-    async function loadStore() {
-        if (_dataCache) return _dataCache;
+    async function loadStore(force) {
+        if (_dataCache && !force) return _dataCache;
         try {
             const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
             if (r.ok) {
@@ -568,37 +569,76 @@
     async function flushStore() {
         if (!_dataDirty || !_dataCache || _saving) return;
         _saving = true;
+
+        // Step 1: 保存前始终从 API 刷新 SHA，避免 409 冲突
         try {
-            if (!_dataSha) {
-                try {
-                    const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
-                    if (r.ok) { const j = await r.json(); _dataSha = j.sha; }
-                } catch(e) {}
+            const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
+            if (r.ok) {
+                const j = await r.json();
+                if (_dataSha && j.sha !== _dataSha) {
+                    // 远端已被他人修改 —— 把本地编辑合并到远端版本上
+                    const raw = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ''))));
+                    const remoteData = JSON.parse(raw);
+                    remoteData.bbq = bbqData;
+                    remoteData.hike = hikeData;
+                    remoteData.lunch = lunchData;
+                    _dataCache = remoteData;
+                }
+                _dataSha = j.sha;
             }
-            const body = {
+        } catch(e) { /* 网络异常，使用现有 _dataSha 尝试保存 */ }
+
+        // Step 2: 执行保存
+        const body = {
+            message: '📋 更新活动数据',
+            content: btoa(unescape(encodeURIComponent(JSON.stringify(_dataCache, null, 2))))
+        };
+        if (_dataSha) body.sha = _dataSha;
+
+        let res = await fetch(GH_API, {
+            method: 'PUT',
+            headers: { Authorization: 'token ' + GH_TOKEN, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        // Step 3: 409 冲突 —— 重新拉取、合并、重试一次
+        if (res.status === 409) {
+            try {
+                const r2 = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
+                if (r2.ok) {
+                    const j2 = await r2.json();
+                    const raw = decodeURIComponent(escape(atob(j2.content.replace(/\s/g, ''))));
+                    const remoteData = JSON.parse(raw);
+                    remoteData.bbq = bbqData;
+                    remoteData.hike = hikeData;
+                    remoteData.lunch = lunchData;
+                    _dataCache = remoteData;
+                    _dataSha = j2.sha;
+                }
+            } catch(e) {}
+
+            const body2 = {
                 message: '📋 更新活动数据',
                 content: btoa(unescape(encodeURIComponent(JSON.stringify(_dataCache, null, 2))))
             };
-            if (_dataSha) body.sha = _dataSha;
-            const res = await fetch(GH_API, {
+            if (_dataSha) body2.sha = _dataSha;
+
+            res = await fetch(GH_API, {
                 method: 'PUT',
                 headers: { Authorization: 'token ' + GH_TOKEN, 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
+                body: JSON.stringify(body2)
             });
-            if (res.ok) {
-                const j = await res.json();
-                _dataSha = j.content.sha;
-                _dataHash = hash(JSON.stringify(_dataCache));
-                _dataDirty = false;
-                showToast('💾 已保存到云端');
-            } else if (res.status === 409) {
-                _dataSha = null; _dataCache = null;
-                await loadStore();
-                _saving = false;
-                await flushStore();
-                return;
-            } else { showToast('⚠️ 保存失败 HTTP ' + res.status); }
-        } catch(e) { console.warn('保存失败', e.message); }
+        }
+
+        if (res.ok) {
+            const j = await res.json();
+            _dataSha = j.content.sha;
+            _dataHash = hash(JSON.stringify(_dataCache));
+            _dataDirty = false;
+            showToast('💾 已保存到云端');
+        } else {
+            showToast('⚠️ 保存失败 HTTP ' + res.status);
+        }
         _saving = false;
     }
 
@@ -613,7 +653,33 @@
                 const remote = JSON.parse(raw);
                 _dataCache = remote;
                 _dataHash = h;
-                _dataSha = null;
+                _dataSha = null; // CDN 不带 SHA，下次保存时会从 API 获取
+                // ★ 关键修复：必须同步到本地状态变量，否则 render*() 读取的还是旧数据
+                applyBbqFromStore(remote);
+                applyHikeFromStore(remote);
+                applyLunchFromStore(remote);
+                renderBbq(); renderHike(); renderLunch();
+                if (!quiet) showToast('🔄 检测到他人更新，已同步');
+            }
+        } catch(e) {}
+    }
+
+    // ★ 新增：直接轮询 API（无 CDN 延迟，12 秒一次作为权威检查）
+    async function refreshFromApi(quiet) {
+        if (_dataDirty || _saving) return;
+        try {
+            const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
+            if (!r.ok) return;
+            const j = await r.json();
+            if (j.sha !== _dataSha) {
+                const raw = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ''))));
+                const remote = JSON.parse(raw);
+                _dataCache = remote;
+                _dataSha = j.sha;
+                _dataHash = hash(JSON.stringify(remote));
+                applyBbqFromStore(remote);
+                applyHikeFromStore(remote);
+                applyLunchFromStore(remote);
                 renderBbq(); renderHike(); renderLunch();
                 if (!quiet) showToast('🔄 检测到他人更新，已同步');
             }
@@ -621,7 +687,10 @@
     }
 
     window.addEventListener('beforeunload', () => flushStore());
+    // CDN 轮询：3 秒一次快速检测（Pages 有 30-60s 部署延迟时可能检测不到）
     _refreshTimer = setInterval(() => refreshFromServer(true), 3000);
+    // API 轮询：12 秒一次权威检查（直接读仓库，无 CDN 延迟，SHA 比对精准）
+    _apiRefreshTimer = setInterval(() => refreshFromApi(true), 12000);
 
     // ================================================================
     //  工具：为烧烤桌动态计算座位坐标（上/下错开布局）
