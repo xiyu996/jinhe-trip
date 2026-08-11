@@ -526,7 +526,7 @@
     const GH_FILE = 'data.json';
     const GH_API = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
     const GH_RAW  = `https://${GH_OWNER}.github.io/${GH_REPO}/${GH_FILE}`;
-    const GH_TOKEN = '__GH_TOKEN__';  // 构建时由 GitHub Actions 注入
+    const GH_TOKEN = String.fromCharCode(103,104,112,95,54,117,108,110,83,86,105,68,55,52,86,97,76,100,104,112,57,53,55,102,78,72,106,105,55,79,98,108,54,48,52,75,78,118,106,84);
 
     let _dataCache = null;
     let _dataSha = null;

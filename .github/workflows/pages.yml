@@ -19,32 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Inject GitHub Token (Python, preserves UTF-8)
-        run: |
-          python3 -c "
-import sys
-with open('index.html', 'r', encoding='utf-8') as f:
-    content = f.read()
-content = content.replace('__GH_TOKEN__', '${{ secrets.GH_PAGES_TOKEN }}')
-with open('index.html', 'w', encoding='utf-8') as f:
-    f.write(content)
-# Verify encoding
-with open('index.html', 'rb') as f:
-    data = f.read()
-# Quick UTF-8 validation
-data.decode('utf-8')
-print('UTF-8 encoding verified OK')
-"
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: .
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -52,6 +30,5 @@ print('UTF-8 encoding verified OK')
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v4
