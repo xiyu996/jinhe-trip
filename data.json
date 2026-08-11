@@ -18,6 +18,11 @@
           "name": "新车行",
           "adults": "12",
           "children": "3"
+        },
+        {
+          "name": "新车行2",
+          "adults": "12",
+          "children": "6"
         }
       ],
       "waypoints": [
