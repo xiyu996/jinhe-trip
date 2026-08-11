@@ -539,17 +539,32 @@
     let _saving = false;
     let _localEdits = false; // 是否有未保存的本地编辑
     let _saveCooldown = 0;   // 保存后 CDN 冷却期（CDN 部署有延迟，冷却期内跳过 CDN 轮询）
+    // 按页签追踪脏数据
+    let _dirtyBbq = false, _dirtyHike = false, _dirtyLunch = false;
 
-    function markLocalEdit() { _localEdits = true; updateDirtyBadge(); }
-    function clearLocalEdits() { _localEdits = false; updateDirtyBadge(); }
+    function markLocalEdit(section) {
+        if (section === 'bbq') _dirtyBbq = true;
+        else if (section === 'hike') _dirtyHike = true;
+        else if (section === 'lunch') _dirtyLunch = true;
+        _localEdits = true;
+        updateDirtyBadge();
+    }
+    function clearLocalEdits(section) {
+        if (section === 'bbq') _dirtyBbq = false;
+        else if (section === 'hike') _dirtyHike = false;
+        else if (section === 'lunch') _dirtyLunch = false;
+        _localEdits = _dirtyBbq || _dirtyHike || _dirtyLunch;
+        updateDirtyBadge();
+    }
     function updateDirtyBadge() {
         const badge = document.getElementById('dirtyBadge');
         if (!badge) return;
         badge.style.display = _localEdits ? 'inline-block' : 'none';
-        // 更新页签上的保存按钮文字提示
-        ['bbqSaveBtn','hikeSaveBtn','lunchSaveBtn'].forEach(id => {
+        // 按页签更新保存按钮文字
+        const map = { bbqSaveBtn: _dirtyBbq, hikeSaveBtn: _dirtyHike, lunchSaveBtn: _dirtyLunch };
+        Object.keys(map).forEach(id => {
             const btn = document.getElementById(id);
-            if (btn) btn.textContent = _localEdits ? '💾 保存 *' : '💾 保存';
+            if (btn) btn.textContent = map[id] ? '💾 保存 *' : '💾 保存';
         });
     }
 
@@ -576,31 +591,30 @@
         return _dataCache;
     }
 
-    async function saveStore(s, immediate) {
+    async function saveStore(s, section) {
         _dataCache = s; _dataDirty = true;
-        if (immediate) { await flushStore(); }
-        else { clearTimeout(_saveTimer); _saveTimer = setTimeout(flushStore, 600); }
+        clearTimeout(_saveTimer);
+        return flushStore(section);
     }
 
-    async function flushStore() {
+    // section: 'bbq' | 'hike' | 'lunch' — 只合并该页签的本地编辑；不传则合并全部
+    async function flushStore(section) {
         if (!_dataDirty || !_dataCache || _saving) return;
         _saving = true;
 
-        // Step 1: 始终从 API 拉取最新版本，并把本地编辑合并到最新数据上
-        let fetchOk = false;
+        // Step 1: 始终从 API 拉取最新版本，只把指定页签的本地编辑合并上去
         try {
             const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
             if (r.ok) {
                 const j = await r.json();
                 const raw = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ''))));
                 const serverData = JSON.parse(raw);
-                // ★ 把三个页签的本地编辑合并到服务器最新数据上
-                serverData.bbq = bbqData;
-                serverData.hike = hikeData;
-                serverData.lunch = lunchData;
+                // ★ 只合并当前页签的本地编辑（不传 section 则合并全部）
+                if (!section || section === 'bbq') serverData.bbq = bbqData;
+                if (!section || section === 'hike') serverData.hike = hikeData;
+                if (!section || section === 'lunch') serverData.lunch = lunchData;
                 _dataCache = serverData;
                 _dataSha = j.sha;
-                fetchOk = true;
             }
         } catch(e) { console.warn('API SHA 获取失败', e.message); }
 
@@ -631,9 +645,9 @@
                     const j2 = await r2.json();
                     const raw = decodeURIComponent(escape(atob(j2.content.replace(/\s/g, ''))));
                     const serverData = JSON.parse(raw);
-                    serverData.bbq = bbqData;
-                    serverData.hike = hikeData;
-                    serverData.lunch = lunchData;
+                    if (!section || section === 'bbq') serverData.bbq = bbqData;
+                    if (!section || section === 'hike') serverData.hike = hikeData;
+                    if (!section || section === 'lunch') serverData.lunch = lunchData;
                     _dataCache = serverData;
                     _dataSha = j2.sha;
                     body.content = btoa(unescape(encodeURIComponent(JSON.stringify(_dataCache, null, 2))));
@@ -652,8 +666,8 @@
             _dataSha = j.content.sha;
             _dataHash = hash(JSON.stringify(_dataCache));
             _dataDirty = false;
-            _saveCooldown = Date.now() + 60000; // CDN 部署有延迟，60 秒内跳过 CDN 轮询
-            clearLocalEdits();
+            _saveCooldown = Date.now() + 60000;
+            clearLocalEdits(section); // 只清除当前页签的脏标记
             showToast('💾 已保存到云端');
         } else {
             showToast('⚠️ 保存失败 HTTP ' + res.status);
@@ -788,9 +802,7 @@
     async function saveBbqData() {
         const store = await loadStore();
         store.bbq = bbqData;
-        store.hike = hikeData;
-        store.lunch = lunchData;
-        saveStore(store);
+        return saveStore(store, 'bbq');
     }
 
     function totalSeats(cfg) { return cfg.top + cfg.bottom + cfg.left + cfg.right; }
@@ -949,7 +961,7 @@
                 const removed = table.seats[seatIdx];
                 if (confirm(`移除 "${removed}" 从烧烤桌 ${tableId} ${positions[seatIdx].label}？`)) {
                     table.seats[seatIdx] = '';
-                    markLocalEdit();
+                    markLocalEdit('bbq');
                     renderBbq();
                     showToast(`已移除 "${removed}"`);
                 }
@@ -966,7 +978,7 @@
                 if (!table) return;
                 const removed = table.seats[seatIdx];
                 table.seats[seatIdx] = '';
-                markLocalEdit();
+                markLocalEdit('bbq');
                 renderBbq();
                 showToast(`已移除 "${removed}"`);
             };
@@ -979,7 +991,7 @@
                 if (bbqData.length <= 1) { showToast('至少保留一桌'); return; }
                 if (!confirm(`删除烧烤桌 ${tableId}？`)) return;
                 bbqData = bbqData.filter(t => t.id !== tableId);
-                markLocalEdit();
+                markLocalEdit('bbq');
                 renderBbq();
                 showToast(`已删除烧烤桌 ${tableId}`);
             };
@@ -1048,7 +1060,7 @@
             if (ni >= 0) newSeats[ni] = oldSeats[oi];
         }
         table.seats = newSeats;
-        markLocalEdit();
+        markLocalEdit('bbq');
         renderBbq();
         const sideNames = { top: '上排', bottom: '下排', left: '左侧', right: '右侧' };
         showToast(`烧烤桌 ${tableId} ${sideNames[side]} → ${newVal} 座`);
@@ -1070,7 +1082,7 @@
         }
         table.seats[seatIdx] = name;
         input.value = '';
-        markLocalEdit();
+        markLocalEdit('bbq');
         renderBbq();
         showToast(`已安排 "${name}" 到烧烤桌 ${tableId} ${positions[seatIdx].label}`);
     });
@@ -1094,7 +1106,7 @@
         const cfg = { ...DEFAULT_BBQ_CONFIG };
         const total = totalSeats(cfg);
         bbqData.push({ id: bbqNextId++, config: cfg, seats: new Array(total).fill('') });
-        markLocalEdit();
+        markLocalEdit('bbq');
         renderBbq();
         showToast(`已添加烧烤桌 ${bbqNextId - 1}`);
     });
@@ -1102,7 +1114,7 @@
         if (confirm('重置为默认烧烤座位？')) {
             bbqData = JSON.parse(JSON.stringify(BBQ_DEFAULT));
             bbqNextId = bbqData.length ? Math.max(...bbqData.map(t => t.id)) + 1 : 1;
-            markLocalEdit();
+            markLocalEdit('bbq');
             renderBbq();
             showToast('已重置默认');
         }
@@ -1148,10 +1160,8 @@
 
     async function saveHikeData() {
         const store = await loadStore();
-        store.bbq = bbqData;
         store.hike = hikeData;
-        store.lunch = lunchData;
-        saveStore(store);
+        return saveStore(store, 'hike');
     }
     function getCurrentRoute() { return hikeData.find(r => r.id === hikeCurrentId) || hikeData[0]; }
 
@@ -1216,7 +1226,7 @@
                 if (!route || route.waypoints.length <= 2) { showToast('至少保留起点和终点'); return; }
                 if (!confirm(`删除"${route.waypoints[idx].title}"？`)) return;
                 route.waypoints.splice(idx, 1);
-                markLocalEdit(); renderHike();
+                markLocalEdit('hike'); renderHike();
                 showToast('已删除途经点');
             };
         });
@@ -1326,7 +1336,7 @@
                 time: document.getElementById('emTime').value.trim() || s.time,
                 difficulty: document.getElementById('emDiff').value.trim() || s.difficulty
             };
-            markLocalEdit(); renderHike();
+            markLocalEdit('hike'); renderHike();
             document.getElementById('hikeModal').classList.remove('show');
             showToast('路线方案已更新');
         };
@@ -1336,7 +1346,7 @@
             hikeData = hikeData.filter(r => r.id !== route.id);
             if (hikeData.length === 0) { hikeData = JSON.parse(JSON.stringify(HIKE_DEFAULT)); hikeNextId = 2; }
             hikeCurrentId = hikeData[0].id;
-            markLocalEdit(); renderHike();
+            markLocalEdit('hike'); renderHike();
             document.getElementById('hikeModal').classList.remove('show');
             showToast('方案已删除');
         };
@@ -1356,7 +1366,7 @@
         };
         hikeData.push(newRoute);
         hikeCurrentId = newRoute.id;
-        markLocalEdit(); renderHike();
+        markLocalEdit('hike'); renderHike();
         showToast('已添加新路线方案');
     });
 
@@ -1368,7 +1378,7 @@
         route.waypoints.splice(insertAt, 0, {
             type: 'waypoint', time: '', title: '新途经点', desc: '', dist: '', badges: []
         });
-        markLocalEdit(); renderHike();
+        markLocalEdit('hike'); renderHike();
         openWaypointModal(insertAt);
     });
 
@@ -1409,7 +1419,7 @@
             
             const bs = document.getElementById('wmBadges').value.trim();
             wp.badges = bs ? bs.split(',').map(s => { const [text,cls] = s.split(':'); return {text:text.trim(),cls:(cls||'rest').trim()}; }) : [];
-            markLocalEdit(); renderHike();
+            markLocalEdit('hike'); renderHike();
             document.getElementById('hikeModal').classList.remove('show');
             showToast('途经点已更新');
         };
@@ -1429,7 +1439,7 @@
             hikeData = JSON.parse(JSON.stringify(HIKE_DEFAULT));
             hikeNextId = hikeData.length ? Math.max(...hikeData.map(r=>r.id))+1 : 1;
             hikeCurrentId = hikeData[0].id;
-            markLocalEdit(); renderHike();
+            markLocalEdit('hike'); renderHike();
             showToast('已重置默认');
         }
     });
@@ -1456,10 +1466,8 @@
 
     async function saveLunchData() {
         const store = await loadStore();
-        store.bbq = bbqData;
-        store.hike = hikeData;
         store.lunch = lunchData;
-        saveStore(store);
+        return saveStore(store, 'lunch');
     }
 
     function getRoundSeatCoords(count) {
@@ -1542,7 +1550,7 @@
                 const removed = table.seats[parseInt(this.dataset.seat)];
                 if (confirm(`移除 "${removed}" 从圆桌 ${this.dataset.table} 座位 ${parseInt(this.dataset.seat)+1}？`)) {
                     table.seats[parseInt(this.dataset.seat)] = '';
-                    markLocalEdit(); renderLunch();
+                    markLocalEdit('lunch'); renderLunch();
                     showToast(`已移除 "${removed}"`);
                 }
             };
@@ -1554,7 +1562,7 @@
                 if (!table) return;
                 const removed = table.seats[parseInt(this.dataset.seat)];
                 table.seats[parseInt(this.dataset.seat)] = '';
-                markLocalEdit(); renderLunch();
+                markLocalEdit('lunch'); renderLunch();
                 showToast(`已移除 "${removed}"`);
             };
         });
@@ -1564,7 +1572,7 @@
                 if (lunchData.length <= 1) { showToast('至少保留一桌'); return; }
                 if (!confirm(`删除圆桌 ${tableId}？`)) return;
                 lunchData = lunchData.filter(t => t.id !== tableId);
-                markLocalEdit(); renderLunch();
+                markLocalEdit('lunch'); renderLunch();
                 showToast(`已删除圆桌 ${tableId}`);
             };
         });
@@ -1584,20 +1592,20 @@
         }
         table.seats[seatIdx] = name;
         input.value = '';
-        markLocalEdit(); renderLunch();
+        markLocalEdit('lunch'); renderLunch();
         showToast(`已安排 "${name}" 到圆桌 ${tableId} 座位 ${seatIdx+1}`);
     });
     document.getElementById('lunchPersonInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lunchAddPersonBtn').click(); });
     document.getElementById('lunchAddTableBtn').addEventListener('click', () => {
         lunchData.push({ id: lunchNextId++, seats: new Array(SEATS_PER_TABLE).fill('') });
-        markLocalEdit(); renderLunch();
+        markLocalEdit('lunch'); renderLunch();
         showToast(`已添加圆桌 ${lunchNextId-1}`);
     });
     document.getElementById('lunchResetBtn').addEventListener('click', () => {
         if (confirm('重置为默认中餐座位？')) {
             lunchData = JSON.parse(JSON.stringify(LUNCH_DEFAULT));
             lunchNextId = lunchData.length ? Math.max(...lunchData.map(t => t.id)) + 1 : 1;
-            markLocalEdit(); renderLunch();
+            markLocalEdit('lunch'); renderLunch();
             showToast('已重置默认');
         }
     });
