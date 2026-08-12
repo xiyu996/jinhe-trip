@@ -318,42 +318,42 @@
         {
           "name": "白酒",
           "qty": "10斤",
-          "checked": false
+          "checked": true
         },
         {
           "name": "啤酒 燕京U8",
           "qty": "6箱×24罐",
-          "checked": false
+          "checked": true
         },
         {
           "name": "可乐",
           "qty": "12瓶（2L装）",
-          "checked": false
+          "checked": true
         },
         {
           "name": "椰子水",
           "qty": "8瓶（1L装）",
-          "checked": false
+          "checked": true
         },
         {
           "name": "唯怡",
           "qty": "9瓶（1.45L装）",
-          "checked": false
+          "checked": true
         },
         {
           "name": "葡萄糖",
           "qty": "2盒",
-          "checked": false
+          "checked": true
         },
         {
           "name": "海王金樽（解酒）",
           "qty": "8瓶",
-          "checked": false
+          "checked": true
         },
         {
           "name": "迈胜 半马包",
           "qty": "12*7",
-          "checked": false
+          "checked": true
         }
       ]
     },
@@ -365,7 +365,7 @@
         {
           "name": "辣椒面",
           "qty": "50袋",
-          "checked": false
+          "checked": true
         },
         {
           "name": "烧烤料",
@@ -380,7 +380,7 @@
         {
           "name": "桌游",
           "qty": "适量",
-          "checked": false
+          "checked": true
         }
       ]
     },
@@ -392,7 +392,7 @@
         {
           "name": "横幅",
           "qty": "2幅",
-          "checked": false
+          "checked": true
         },
         {
           "name": "拍照道具",
