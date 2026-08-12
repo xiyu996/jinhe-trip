@@ -327,6 +327,68 @@ body {
 }
 .merchant-tag:hover { background: var(--card); border-color: var(--line); color: var(--ink); }
 
+/* ===== Room Assignment ===== */
+.room-summary-bar {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
+  background: var(--card); border-radius: var(--radius); padding: 10px 16px;
+  box-shadow: var(--shadow-sm); border: 1px solid var(--line-soft);
+}
+.room-summary-item {
+  font-size: 13px; font-weight: 600; color: var(--ink-soft);
+  background: var(--paper-warm); padding: 4px 12px; border-radius: 20px;
+}
+.room-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.room-card {
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  overflow: hidden; border: 1px solid var(--line-soft); transition: .25s;
+}
+.room-card:hover { box-shadow: var(--shadow-md); }
+.room-card-header {
+  padding: 8px 12px; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  border-bottom: 2px solid;
+}
+.room-card-header .room-num {
+  width: 24px; height: 24px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.room-card-header .room-floor { font-size: 11px; }
+.room-type-badge {
+  font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+  margin-left: auto; white-space: nowrap;
+}
+.room-card-header .room-count { font-size: 11px; color: var(--ink-mute); }
+.room-card-header .room-del-btn { background: none; border: none; color: var(--wine); font-size: 14px; cursor: pointer; opacity: .4; transition: .15s; padding: 0 2px; }
+.room-card-header .room-del-btn:hover { opacity: 1; }
+.room-card-body { padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; }
+.room-info-row { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+.room-info-label { color: var(--ink-mute); font-weight: 500; min-width: 48px; }
+.room-info-value { color: var(--ink); font-weight: 600; }
+.room-vehicle-name { color: var(--gold-deep); }
+.room-card-footer {
+  padding: 8px 12px; border-top: 1px solid var(--line-soft);
+  display: flex; align-items: center; gap: 4px;
+}
+.room-card-footer .btn { padding: 3px 8px; font-size: 11px; }
+.room-card-footer .btn:disabled { opacity: .3; pointer-events: none; }
+
+/* ===== Proc edit buttons ===== */
+.proc-item-actions { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; }
+.proc-item-actions .act-btn {
+  background: none; border: none; cursor: pointer; font-size: 12px; opacity: .4; transition: .15s; padding: 2px;
+}
+.proc-item-actions .act-btn:hover { opacity: 1; }
+.proc-item-actions .act-edit { color: var(--slate); }
+.proc-item-actions .act-del { color: var(--wine); }
+.proc-title-actions { display: flex; gap: 4px; margin-left: auto; }
+.proc-title-actions .act-btn {
+  background: none; border: none; cursor: pointer; font-size: 13px; opacity: .4; transition: .15s; padding: 2px 4px;
+}
+.proc-title-actions .act-btn:hover { opacity: 1; }
+.proc-title-actions .act-edit { color: var(--slate); }
+.proc-title-actions .act-del { color: var(--wine); }
+
 /* Timeline panel */
 .tl-panel-item { position: relative; margin-bottom: 18px; }
 .tl-dot {
@@ -382,6 +444,7 @@ body {
   .route-summary { grid-template-columns: 1fr 1fr; gap: 6px; }
   .gear-grid { grid-template-columns: 1fr; }
   .seating-grid { grid-template-columns: 1fr; }
+  .room-grid { grid-template-columns: 1fr; }
   .flow-svg-wrap svg { min-width: 490px; }
   .modal-box { padding: 16px; }
   .modal-box .field-row { flex-direction: column; gap: 0; }
@@ -421,6 +484,7 @@ body {
 <div class="tabs" id="tabBar">
   <div class="tab active" data-tab="tasks">📋 任务看板</div>
   <div class="tab" data-tab="proc">🛒 采购清单</div>
+  <div class="tab" data-tab="rooms">🏨 房间分配</div>
   <div class="tab" data-tab="bbq">🍖 烧烤座位</div>
   <div class="tab" data-tab="lunch">🍽️ 中餐座位</div>
   <div class="tab" data-tab="hike">🥾 徒步路线</div>
@@ -431,7 +495,27 @@ body {
 
 <!-- Panels -->
 <div class="panel active" id="panel-tasks"><div id="taskList"></div></div>
-<div class="panel" id="panel-proc"><div id="procList"></div></div>
+<div class="panel" id="panel-proc">
+  <div class="toolbar">
+    <div class="grp">
+      <button class="btn btn-gold btn-sm" id="procAddCatBtn">➕ 添加分类</button>
+      <button class="btn btn-sm" id="procAddItemBtn">➕ 添加物品</button>
+    </div>
+    <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="procResetBtn">重置默认</button>
+    </div>
+  </div>
+  <div id="procList"></div></div>
+<div class="panel" id="panel-rooms">
+  <div class="toolbar">
+    <div class="grp">
+      <button class="btn btn-gold btn-sm" id="roomAddBtn">➕ 添加房间</button>
+    </div>
+    <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="roomResetBtn">重置默认</button>
+    </div>
+  </div>
+  <div class="room-grid" id="roomGrid"></div></div>
 <div class="panel" id="panel-bbq">
   <div class="toolbar">
     <div class="grp">
@@ -517,24 +601,24 @@ const GH_TOKEN = String.fromCharCode(103,104,112,95,54,117,108,110,83,86,105,68,
 
 let _dataCache = null, _dataSha = null, _dataHash = '', _dataDirty = false, _saving = false, _polling = false;
 let _dirtyTasks=false,_dirtyProc=false,_dirtyBbq=false,_dirtyHike=false,_dirtyLunch=false;
-let _dirtyTimeline=false,_dirtyFlow=false;
+let _dirtyTimeline=false,_dirtyFlow=false,_dirtyRooms=false;
 
 function markDirty(section) {
-  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', bbq:'_dirtyBbq', hike:'_dirtyHike', lunch:'_dirtyLunch', timeline:'_dirtyTimeline', flow:'_dirtyFlow' };
+  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', bbq:'_dirtyBbq', hike:'_dirtyHike', lunch:'_dirtyLunch', timeline:'_dirtyTimeline', flow:'_dirtyFlow', rooms:'_dirtyRooms' };
   if (map[section]) window[map[section]] = true;
   _dataDirty = true; updateDirtyUI();
 }
 function clearDirty(section) {
-  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', bbq:'_dirtyBbq', hike:'_dirtyHike', lunch:'_dirtyLunch', timeline:'_dirtyTimeline', flow:'_dirtyFlow' };
+  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', bbq:'_dirtyBbq', hike:'_dirtyHike', lunch:'_dirtyLunch', timeline:'_dirtyTimeline', flow:'_dirtyFlow', rooms:'_dirtyRooms' };
   if (section) { if (map[section]) window[map[section]] = false; }
   else { Object.values(map).forEach(k => window[k] = false); }
-  _dataDirty = _dirtyTasks||_dirtyProc||_dirtyBbq||_dirtyHike||_dirtyLunch||_dirtyTimeline||_dirtyFlow;
+  _dataDirty = _dirtyTasks||_dirtyProc||_dirtyBbq||_dirtyHike||_dirtyLunch||_dirtyTimeline||_dirtyFlow||_dirtyRooms;
   updateDirtyUI();
 }
 function updateDirtyUI() {
   const badge = document.getElementById('dirtyBadge');
   const hint = document.getElementById('saveHint');
-  const anyDirty = _dirtyTasks||_dirtyProc||_dirtyBbq||_dirtyHike||_dirtyLunch||_dirtyTimeline||_dirtyFlow;
+  const anyDirty = _dirtyTasks||_dirtyProc||_dirtyBbq||_dirtyHike||_dirtyLunch||_dirtyTimeline||_dirtyFlow||_dirtyRooms;
   if (badge) badge.style.display = anyDirty ? 'inline-block' : 'none';
   if (hint) { hint.textContent = anyDirty ? '⚠️ 有未保存的修改' : '✅ 数据已同步'; hint.className = 'hint' + (anyDirty ? ' dirty' : ''); }
 }
@@ -579,6 +663,7 @@ async function flushStore(section) {
       if (!section || section==='bbq') serverData.bbq = bbqData;
       if (!section || section==='hike') serverData.hike = hikeData;
       if (!section || section==='lunch') serverData.lunch = lunchData;
+      if (!section || section==='rooms') serverData.rooms = roomsData;
       _dataCache = serverData; _dataSha = j.sha;
     }
   } catch(e) {}
@@ -626,6 +711,7 @@ function mergeRemote(remote) {
   if (!_dirtyBbq) { if (remote.bbq) applyBbqData(remote.bbq); }
   if (!_dirtyHike) { if (remote.hike) applyHikeData(remote.hike); }
   if (!_dirtyLunch) { if (remote.lunch) applyLunchData(remote.lunch); }
+  if (!_dirtyRooms) { if (remote.rooms) applyRoomsData(remote.rooms); }
   renderAll();
 }
 
@@ -773,12 +859,21 @@ function renderProc() {
     const total = cat.items.length;
     const checked = cat.items.filter(i => i.checked).length;
     return `<div class="proc-section">
-      <div class="proc-title"><span class="icon" style="background:${cat.iconBg}">${cat.icon}</span>${cat.category}<span class="count">${checked}/${total}</span></div>
+      <div class="proc-title"><span class="icon" style="background:${cat.iconBg}">${cat.icon}</span>${cat.category}<span class="count">${checked}/${total}</span>
+        <span class="proc-title-actions">
+          <button class="act-btn act-edit" onclick="editProcCategory(${ci})" title="编辑分类">✏️</button>
+          <button class="act-btn act-del" onclick="deleteProcCategory(${ci})" title="删除分类">✕</button>
+        </span>
+      </div>
       <div class="proc-list">${cat.items.map((item, ii) => `
-        <div class="proc-item ${item.checked?'checked':''}" onclick="toggleProc(${ci},${ii})">
-          <div class="proc-check ${item.checked?'checked':''}">${item.checked?'✓':''}</div>
-          <div class="proc-name">${item.name}</div>
+        <div class="proc-item ${item.checked?'checked':''}">
+          <div class="proc-check ${item.checked?'checked':''}" onclick="toggleProc(${ci},${ii})">${item.checked?'✓':''}</div>
+          <div class="proc-name" onclick="toggleProc(${ci},${ii})">${item.name}</div>
           <div class="proc-qty">${item.qty}</div>
+          <div class="proc-item-actions">
+            <button class="act-btn act-edit" onclick="event.stopPropagation();editProcItem(${ci},${ii})" title="编辑">✏️</button>
+            <button class="act-btn act-del" onclick="event.stopPropagation();deleteProcItem(${ci},${ii})" title="删除">✕</button>
+          </div>
         </div>`).join('')}</div>
     </div>`;
   }).join('');
@@ -1316,6 +1411,293 @@ function renderTimelinePanel() {
 }
 
 // ================================================================
+// 8b. Procurement Edit Functions
+// ================================================================
+function editProcCategory(ci) {
+  const cat = procData[ci];
+  const html = `<h3>✏️ 编辑分类</h3>
+    <div class="field"><label>分类名称</label><input id="ecCatName" value="${escHtml(cat.category)}"></div>
+    <div class="field"><label>图标（emoji）</label><input id="ecCatIcon" value="${escHtml(cat.icon)}" placeholder="如 🍷"></div>
+    <div class="field"><label>图标背景色</label><input id="ecCatBg" value="${escHtml(cat.iconBg)}" placeholder="如 #8E5E8C"></div>
+    <div class="modal-actions"><button class="btn btn-sm" id="ecCancel">取消</button><button class="btn btn-primary btn-sm" id="ecSave">保存</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+  document.getElementById('ecCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('ecSave').onclick = () => {
+    cat.category = document.getElementById('ecCatName').value.trim() || cat.category;
+    cat.icon = document.getElementById('ecCatIcon').value.trim() || cat.icon;
+    cat.iconBg = document.getElementById('ecCatBg').value.trim() || cat.iconBg;
+    markDirty('proc'); renderProc(); document.getElementById('hikeModal').classList.remove('show'); showToast('分类已更新');
+  };
+}
+function deleteProcCategory(ci) {
+  if (procData.length <= 1) { showToast('至少保留一个分类'); return; }
+  if (!confirm(`删除分类"${procData[ci].category}"及其所有物品？`)) return;
+  procData.splice(ci, 1); markDirty('proc'); renderProc(); showToast('分类已删除');
+}
+function editProcItem(ci, ii) {
+  const item = procData[ci].items[ii];
+  const html = `<h3>✏️ 编辑物品</h3>
+    <div class="field"><label>物品名称</label><input id="eiName" value="${escHtml(item.name)}"></div>
+    <div class="field"><label>数量</label><input id="eiQty" value="${escHtml(item.qty)}"></div>
+    <div class="modal-actions"><button class="btn btn-sm" id="eiCancel">取消</button><button class="btn btn-primary btn-sm" id="eiSave">保存</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+  document.getElementById('eiCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('eiSave').onclick = () => {
+    item.name = document.getElementById('eiName').value.trim() || item.name;
+    item.qty = document.getElementById('eiQty').value.trim() || item.qty;
+    markDirty('proc'); renderProc(); document.getElementById('hikeModal').classList.remove('show'); showToast('物品已更新');
+  };
+}
+function deleteProcItem(ci, ii) {
+  if (!confirm(`删除"${procData[ci].items[ii].name}"？`)) return;
+  procData[ci].items.splice(ii, 1); markDirty('proc'); renderProc(); showToast('物品已删除');
+}
+function addProcCategory() {
+  const html = `<h3>➕ 添加分类</h3>
+    <div class="field"><label>分类名称</label><input id="acName" value="新分类"></div>
+    <div class="field"><label>图标（emoji）</label><input id="acIcon" value="📦" placeholder="如 📦"></div>
+    <div class="field"><label>图标背景色</label><input id="acBg" value="#6B6C78" placeholder="如 #6B6C78"></div>
+    <div class="modal-actions"><button class="btn btn-sm" id="acCancel">取消</button><button class="btn btn-primary btn-sm" id="acSave">添加</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+  document.getElementById('acCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('acSave').onclick = () => {
+    procData.push({ category: document.getElementById('acName').value.trim() || '新分类', icon: document.getElementById('acIcon').value.trim() || '📦', iconBg: document.getElementById('acBg').value.trim() || '#6B6C78', items: [] });
+    markDirty('proc'); renderProc(); document.getElementById('hikeModal').classList.remove('show'); showToast('分类已添加');
+  };
+}
+function addProcItemToCategory(ci) {
+  const html = `<h3>➕ 添加物品到「${escHtml(procData[ci].category)}」</h3>
+    <div class="field"><label>物品名称</label><input id="aiName" value="新物品"></div>
+    <div class="field"><label>数量</label><input id="aiQty" value="适量" placeholder="如 10斤"></div>
+    <div class="modal-actions"><button class="btn btn-sm" id="aiCancel">取消</button><button class="btn btn-primary btn-sm" id="aiSave">添加</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+  document.getElementById('aiCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('aiSave').onclick = () => {
+    procData[ci].items.push({ name: document.getElementById('aiName').value.trim() || '新物品', qty: document.getElementById('aiQty').value.trim() || '适量', checked: false });
+    markDirty('proc'); renderProc(); document.getElementById('hikeModal').classList.remove('show'); showToast('物品已添加');
+  };
+}
+// Proc toolbar events
+document.getElementById('procAddCatBtn').addEventListener('click', addProcCategory);
+document.getElementById('procAddItemBtn').addEventListener('click', () => {
+  if (procData.length === 0) { showToast('请先添加分类'); return; }
+  // pick first category by default, or let user choose via quick select
+  const sel = document.createElement('select');
+  sel.style.cssText = 'margin-right:8px;';
+  procData.forEach((cat, i) => { const o = document.createElement('option'); o.value = i; o.textContent = cat.category; sel.appendChild(o); });
+  const html = `<h3>➕ 添加物品</h3><div class="field"><label>选择分类</label><select id="aiCat">${procData.map((cat,i) => `<option value="${i}">${cat.category}</option>`).join('')}</select></div>
+    <div class="field"><label>物品名称</label><input id="aiName" value="新物品"></div>
+    <div class="field"><label>数量</label><input id="aiQty" value="适量"></div>
+    <div class="modal-actions"><button class="btn btn-sm" id="aiCancel">取消</button><button class="btn btn-primary btn-sm" id="aiSave">添加</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+  document.getElementById('aiCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('aiSave').onclick = () => {
+    const ci = parseInt(document.getElementById('aiCat').value);
+    procData[ci].items.push({ name: document.getElementById('aiName').value.trim() || '新物品', qty: document.getElementById('aiQty').value.trim() || '适量', checked: false });
+    markDirty('proc'); renderProc(); document.getElementById('hikeModal').classList.remove('show'); showToast('物品已添加');
+  };
+});
+document.getElementById('procResetBtn').addEventListener('click', () => {
+  if (confirm('重置为默认采购清单？')) { procData = JSON.parse(JSON.stringify(DEFAULT_PROC)); markDirty('proc'); renderProc(); showToast('已重置默认'); }
+});
+
+// ================================================================
+// 8c. Room Assignment Data  (车行 + 成人/儿童 + 房型)
+// ================================================================
+const ROOM_TYPES = ['标间','大床房','家庭房','套房','三人间'];
+const ROOMS_DEFAULT = [
+  { id: 1,  name: '101', floor: '1楼', roomType: '标间',   vehicle: '默认车行', adults: 2, children: 0 },
+  { id: 2,  name: '102', floor: '1楼', roomType: '标间',   vehicle: '默认车行', adults: 2, children: 0 },
+  { id: 3,  name: '103', floor: '1楼', roomType: '大床房', vehicle: '默认车行', adults: 1, children: 0 },
+  { id: 4,  name: '201', floor: '2楼', roomType: '标间',   vehicle: '默认车行', adults: 2, children: 0 },
+  { id: 5,  name: '202', floor: '2楼', roomType: '家庭房', vehicle: '默认车行', adults: 2, children: 1 },
+  { id: 6,  name: '203', floor: '2楼', roomType: '标间',   vehicle: '默认车行', adults: 2, children: 0 },
+  { id: 7,  name: '301', floor: '3楼', roomType: '大床房', vehicle: '默认车行', adults: 1, children: 0 },
+  { id: 8,  name: '302', floor: '3楼', roomType: '三人间', vehicle: '默认车行', adults: 3, children: 0 },
+  { id: 9,  name: '303', floor: '3楼', roomType: '套房',   vehicle: '默认车行', adults: 2, children: 0 },
+  { id: 10, name: '304', floor: '3楼', roomType: '标间',   vehicle: '默认车行', adults: 2, children: 0 },
+];
+let roomsData = JSON.parse(JSON.stringify(ROOMS_DEFAULT));
+let roomsNextId = 11;
+
+function applyRoomsData(rd) {
+  if (rd && Array.isArray(rd) && rd.length) {
+    roomsData = rd.map(r => ({
+      id: r.id, name: r.name||'', floor: r.floor||'1楼',
+      roomType: r.roomType||'标间', vehicle: r.vehicle||'默认车行',
+      adults: r.adults||0, children: r.children||0
+    }));
+    roomsNextId = Math.max(...roomsData.map(r => r.id), 0) + 1;
+  }
+}
+
+function floorColor(floor) {
+  const map = { '1楼': '#3D5A80', '2楼': '#4A7C5E', '3楼': '#8B2635', '4楼': '#C8843C' };
+  return map[floor] || '#6B6C78';
+}
+
+function renderRooms() {
+  // Summary bar
+  const totalAdults = roomsData.reduce((s,r) => s + r.adults, 0);
+  const totalChildren = roomsData.reduce((s,r) => s + r.children, 0);
+  const vehicleGroups = [...new Set(roomsData.map(r => r.vehicle))];
+
+  let summary = `<div class="room-summary-bar">
+    <span class="room-summary-item">🏨 ${roomsData.length}间房</span>
+    <span class="room-summary-item">🧑 ${totalAdults}成人</span>
+    <span class="room-summary-item">👶 ${totalChildren}儿童</span>
+    <span class="room-summary-item">🚗 ${vehicleGroups.length}车行</span>
+  </div>`;
+
+  document.getElementById('roomGrid').innerHTML = summary + roomsData.map(room => {
+    const color = floorColor(room.floor);
+    const total = room.adults + room.children;
+    return `<div class="room-card">
+      <div class="room-card-header" style="background:${color}15;border-bottom-color:${color};">
+        <span class="room-num" style="background:${color};">${room.name}</span>
+        <span class="room-floor" style="color:${color};">${room.floor}</span>
+        <span class="room-type-badge" style="background:${color}15;color:${color};">${room.roomType}</span>
+        <span class="room-count">${total}人</span>
+        <button class="room-del-btn" data-room="${room.id}" title="删除房间">✕</button>
+      </div>
+      <div class="room-card-body">
+        <div class="room-info-row">
+          <span class="room-info-label">🚗 车行</span>
+          <span class="room-info-value room-vehicle-name">${escHtml(room.vehicle)}</span>
+        </div>
+        <div class="room-info-row">
+          <span class="room-info-label">🧑 成人</span>
+          <span class="room-info-value" id="roomAdults_${room.id}">${room.adults} 人</span>
+          <span class="room-info-label" style="margin-left:12px;">👶 儿童</span>
+          <span class="room-info-value" id="roomChildren_${room.id}">${room.children} 人</span>
+        </div>
+      </div>
+      <div class="room-card-footer">
+        <button class="btn btn-sm" data-room-minus-adult="${room.id}" ${room.adults<=0?'disabled':''}>🧑−</button>
+        <button class="btn btn-sm" data-room-plus-adult="${room.id}">🧑+</button>
+        <button class="btn btn-sm" data-room-minus-child="${room.id}" ${room.children<=0?'disabled':''}>👶−</button>
+        <button class="btn btn-sm" data-room-plus-child="${room.id}">👶+</button>
+        <button class="btn btn-sm" data-room-edit="${room.id}" title="编辑房间" style="margin-left:auto;">✏️</button>
+      </div>
+    </div>`;
+  }).join('');
+  attachRoomEvents();
+}
+
+function attachRoomEvents() {
+  // +/- Adult buttons
+  document.querySelectorAll('[data-room-plus-adult]').forEach(btn => {
+    btn.onclick = function() {
+      const room = roomsData.find(r => r.id === parseInt(this.dataset.roomPlusAdult));
+      if (room) { room.adults++; markDirty('rooms'); renderRooms(); }
+    };
+  });
+  document.querySelectorAll('[data-room-minus-adult]').forEach(btn => {
+    btn.onclick = function() {
+      const room = roomsData.find(r => r.id === parseInt(this.dataset.roomMinusAdult));
+      if (room && room.adults > 0) { room.adults--; markDirty('rooms'); renderRooms(); }
+    };
+  });
+  // +/- Child buttons
+  document.querySelectorAll('[data-room-plus-child]').forEach(btn => {
+    btn.onclick = function() {
+      const room = roomsData.find(r => r.id === parseInt(this.dataset.roomPlusChild));
+      if (room) { room.children++; markDirty('rooms'); renderRooms(); }
+    };
+  });
+  document.querySelectorAll('[data-room-minus-child]').forEach(btn => {
+    btn.onclick = function() {
+      const room = roomsData.find(r => r.id === parseInt(this.dataset.roomMinusChild));
+      if (room && room.children > 0) { room.children--; markDirty('rooms'); renderRooms(); }
+    };
+  });
+  // Edit room modal
+  document.querySelectorAll('[data-room-edit]').forEach(btn => {
+    btn.onclick = function() {
+      const room = roomsData.find(r => r.id === parseInt(this.dataset.roomEdit));
+      if (!room) return;
+      const html = `<h3>✏️ 编辑房间 ${room.name}</h3>
+        <div class="field-row">
+          <div class="field"><label>房间号</label><input id="erName" value="${escHtml(room.name)}"></div>
+          <div class="field"><label>楼层</label><select id="erFloor">${['1楼','2楼','3楼','4楼'].map(f => `<option value="${f}" ${room.floor===f?'selected':''}>${f}</option>`).join('')}</select></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>房型</label><select id="erRoomType">${ROOM_TYPES.map(t => `<option value="${t}" ${room.roomType===t?'selected':''}>${t}</option>`).join('')}</select></div>
+          <div class="field"><label>车行</label><input id="erVehicle" value="${escHtml(room.vehicle)}" placeholder="车行名称"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>成人人数</label><input id="erAdults" type="number" min="0" max="10" value="${room.adults}"></div>
+          <div class="field"><label>儿童人数</label><input id="erChildren" type="number" min="0" max="10" value="${room.children}"></div>
+        </div>
+        <div class="modal-actions"><button class="btn btn-sm" id="erCancel">取消</button><button class="btn btn-primary btn-sm" id="erSave">保存</button></div>`;
+      document.getElementById('hikeModalContent').innerHTML = html;
+      document.getElementById('hikeModal').classList.add('show');
+      document.getElementById('erCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+      document.getElementById('erSave').onclick = () => {
+        room.name = document.getElementById('erName').value.trim() || room.name;
+        room.floor = document.getElementById('erFloor').value;
+        room.roomType = document.getElementById('erRoomType').value;
+        room.vehicle = document.getElementById('erVehicle').value.trim() || '默认车行';
+        room.adults = Math.max(0, Math.min(10, parseInt(document.getElementById('erAdults').value) || 0));
+        room.children = Math.max(0, Math.min(10, parseInt(document.getElementById('erChildren').value) || 0));
+        markDirty('rooms'); renderRooms(); document.getElementById('hikeModal').classList.remove('show'); showToast('房间已更新');
+      };
+    };
+  });
+  // Delete room
+  document.querySelectorAll('.room-del-btn').forEach(btn => {
+    btn.onclick = function() {
+      const roomId = parseInt(this.dataset.room);
+      if (roomsData.length <= 1) { showToast('至少保留一个房间'); return; }
+      const room = roomsData.find(r => r.id === roomId);
+      if (!confirm(`删除房间 ${room.name}（${room.floor} ${room.roomType}）？`)) return;
+      roomsData = roomsData.filter(r => r.id !== roomId); markDirty('rooms'); renderRooms(); showToast(`已删除房间 ${room.name}`);
+    };
+  });
+}
+
+// Room toolbar events
+document.getElementById('roomAddBtn').addEventListener('click', () => {
+  const html = `<h3>➕ 添加房间</h3>
+    <div class="field-row">
+      <div class="field"><label>房间号</label><input id="arName" value="${roomsNextId}"></div>
+      <div class="field"><label>楼层</label><select id="arFloor">${['1楼','2楼','3楼','4楼'].map(f => `<option value="${f}">${f}</option>`).join('')}</select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>房型</label><select id="arRoomType">${ROOM_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>
+      <div class="field"><label>车行</label><input id="arVehicle" value="默认车行" placeholder="车行名称"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>成人人数</label><input id="arAdults" type="number" min="0" max="10" value="2"></div>
+      <div class="field"><label>儿童人数</label><input id="arChildren" type="number" min="0" max="10" value="0"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-sm" id="arCancel">取消</button><button class="btn btn-primary btn-sm" id="arSave">添加</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+  document.getElementById('arCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('arSave').onclick = () => {
+    roomsData.push({
+      id: roomsNextId++,
+      name: document.getElementById('arName').value.trim() || String(roomsNextId-1),
+      floor: document.getElementById('arFloor').value,
+      roomType: document.getElementById('arRoomType').value,
+      vehicle: document.getElementById('arVehicle').value.trim() || '默认车行',
+      adults: Math.max(0, Math.min(10, parseInt(document.getElementById('arAdults').value) || 0)),
+      children: Math.max(0, Math.min(10, parseInt(document.getElementById('arChildren').value) || 0))
+    });
+    markDirty('rooms'); renderRooms(); document.getElementById('hikeModal').classList.remove('show'); showToast('房间已添加');
+  };
+});
+document.getElementById('roomResetBtn').addEventListener('click', () => {
+  if (confirm('重置为默认房间分配？')) { roomsData = JSON.parse(JSON.stringify(ROOMS_DEFAULT)); roomsNextId = 11; markDirty('rooms'); renderRooms(); showToast('已重置默认'); }
+});
+
+// ================================================================
 // 9. Flow Charts (SVG)
 // ================================================================
 function svgNode(x, y, w, h, fill, title, sub, subColor) {
@@ -1463,13 +1845,14 @@ function renderFlow() {
 // 10. Save All & Init
 // ================================================================
 async function saveAll() {
-  if (!_dirtyTasks && !_dirtyProc && !_dirtyBbq && !_dirtyHike && !_dirtyLunch && !_dirtyTimeline && !_dirtyFlow) {
+  if (!_dirtyTasks && !_dirtyProc && !_dirtyBbq && !_dirtyHike && !_dirtyLunch && !_dirtyTimeline && !_dirtyFlow && !_dirtyRooms) {
     showToast('✅ 没有需要保存的修改'); return;
   }
   const store = await loadStore();
   store.taskStatuses = taskStatuses; store.tasks = tasksData;
   store.proc = procData; store.bbq = bbqData;
   store.hike = hikeData; store.lunch = lunchData;
+  store.rooms = roomsData;
   _dataCache = store;
   return flushStore(); // save all sections
 }
@@ -1477,7 +1860,7 @@ async function saveAll() {
 document.getElementById('saveAllBtn').addEventListener('click', saveAll);
 
 function renderAll() {
-  renderTasks(); renderProc(); renderBbq(); renderLunch(); renderHike(); renderTimelinePanel(); renderFlow();
+  renderTasks(); renderProc(); renderRooms(); renderBbq(); renderLunch(); renderHike(); renderTimelinePanel(); renderFlow();
 }
 
 async function initApp() {
@@ -1489,6 +1872,7 @@ async function initApp() {
     if (store.bbq) applyBbqData(store.bbq);
     if (store.hike) applyHikeData(store.hike);
     if (store.lunch) applyLunchData(store.lunch);
+    if (store.rooms) applyRoomsData(store.rooms);
   }
   renderAll();
   showToast('📋 已从云端加载数据');
