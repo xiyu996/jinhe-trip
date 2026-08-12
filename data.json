@@ -368,11 +368,6 @@
           "checked": true
         },
         {
-          "name": "烧烤料",
-          "qty": "适量",
-          "checked": false
-        },
-        {
           "name": "零食",
           "qty": "适量",
           "checked": false
