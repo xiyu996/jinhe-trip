@@ -395,13 +395,14 @@
         {
           "id": 1,
           "type": "rect",
+          "name": "方桌 1",
+          "owner": "",
           "config": {
             "top": 14,
             "bottom": 14,
             "left": 1,
             "right": 1
           },
-          "owner": "",
           "seats": [
             "",
             "",
@@ -438,13 +439,14 @@
         {
           "id": 2,
           "type": "rect",
+          "name": "方桌 2",
+          "owner": "",
           "config": {
             "top": 14,
             "bottom": 14,
             "left": 1,
             "right": 1
           },
-          "owner": "",
           "seats": [
             "",
             "",
@@ -481,6 +483,7 @@
         {
           "id": 101,
           "type": "round",
+          "name": "圆桌 101",
           "owner": "",
           "seats": [
             "小邓总",
@@ -498,6 +501,7 @@
         {
           "id": 102,
           "type": "round",
+          "name": "圆桌 102",
           "owner": "",
           "seats": [
             "邱林海",
@@ -515,6 +519,7 @@
         {
           "id": 103,
           "type": "round",
+          "name": "圆桌 103",
           "owner": "",
           "seats": [
             "捷电",
@@ -532,6 +537,7 @@
         {
           "id": 104,
           "type": "round",
+          "name": "圆桌 104",
           "owner": "",
           "seats": [
             "宜车",
@@ -763,7 +769,7 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "卡尔曼名车",
-      "adults": 1,
+      "adults": 2,
       "children": 0
     },
     {
@@ -772,7 +778,7 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "悦友名车",
-      "adults": 1,
+      "adults": 2,
       "children": 0
     },
     {
