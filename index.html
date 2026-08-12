@@ -238,6 +238,16 @@ body {
 .bbq-config-btn:disabled { opacity: .25; cursor: default; pointer-events: none; }
 .bbq-side-label { font-size: 10px; font-weight: 700; fill: var(--ink-mute); text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
 
+/* Seating Plans */
+.seating-plan { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; border: 1px solid var(--line-soft); margin-bottom: 16px; }
+.seating-plan .plan-header { padding: 10px 14px; display: flex; align-items: center; gap: 8px; background: var(--paper-warm); border-bottom: 2px solid var(--gold); }
+.seating-plan .plan-header .plan-name { font-size: 16px; font-weight: 700; color: var(--ink); cursor: pointer; min-width: 40px; }
+.seating-plan .plan-header .plan-name:hover { color: var(--gold-deep); text-decoration: underline; }
+.seating-plan .plan-header .plan-badge { font-size: 11px; color: var(--ink-mute); background: var(--paper); padding: 2px 8px; border-radius: 10px; }
+.plan-tables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 12px; padding: 12px; }
+.plan-add-bar { display: flex; gap: 6px; padding: 8px 14px; border-top: 1px solid var(--line-soft); }
+.plan-add-bar .btn { font-size: 11px; }
+
 /* Lunch round table */
 .round-table-outer { fill: var(--paper); stroke: #D0CCC4; stroke-width: 2; }
 .round-table-inner { fill: var(--paper-warm); stroke: #D0CCC4; stroke-width: 1; }
@@ -299,7 +309,12 @@ body {
 .badge-alert { background: var(--wine-light); color: var(--wine); }
 .badge-ok { background: var(--sage-light); color: var(--sage); }
 .badge-todo { background: var(--paper-warm); color: var(--ink-mute); }
+.badge-doing { background: #E3F0FD; color: #2563EB; }
 .flow-svg-wrap { padding: 4px 12px 8px; overflow-x: auto; }
+.flow-step-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; padding: 6px; background: #FAF8F5; border-radius: 6px; }
+.flow-step-row .fstep-num { width: 20px; text-align: center; font-weight: 700; color: var(--ink-mute); font-size: 12px; flex-shrink: 0; }
+.flow-step-row .fstep-title { flex: 1; min-width: 80px; }
+.flow-step-row .fstep-sub { flex: 1; min-width: 80px; }
 .flow-svg-wrap svg { width: 100%; min-width: 560px; height: auto; display: block; }
 .flow-note-bar { margin: 0 18px 14px; background: var(--paper-warm); border-left: 2px solid var(--gold); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 8px 12px; font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
 .flow-alert-bar { margin: 0 18px 14px; background: var(--wine-light); border-left: 2px solid var(--wine); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 8px 12px; font-size: 12px; color: var(--wine); font-weight: 600; display: flex; align-items: center; gap: 8px; }
@@ -485,8 +500,7 @@ body {
   <div class="tab active" data-tab="tasks">📋 任务看板</div>
   <div class="tab" data-tab="proc">🛒 采购清单</div>
   <div class="tab" data-tab="rooms">🏨 房间分配</div>
-  <div class="tab" data-tab="bbq">🍖 烧烤座位</div>
-  <div class="tab" data-tab="lunch">🍽️ 中餐座位</div>
+  <div class="tab" data-tab="seating">🍽️ 座位安排</div>
   <div class="tab" data-tab="hike">🥾 徒步路线</div>
   <div class="tab" data-tab="timeline2">⏱️ 时间线</div>
   <div class="tab" data-tab="flow">📊 流程图</div>
@@ -516,38 +530,16 @@ body {
     </div>
   </div>
   <div class="room-grid" id="roomGrid"></div></div>
-<div class="panel" id="panel-bbq">
+<div class="panel" id="panel-seating">
   <div class="toolbar">
     <div class="grp">
-      <label>➕ 添加人员</label>
-      <input type="text" id="bbqPersonInput" placeholder="输入姓名">
-      <select id="bbqTargetSeat"></select>
-      <select id="bbqTargetTable"></select>
-      <button class="btn btn-gold" id="bbqAddPersonBtn">添加</button>
+      <button class="btn btn-gold btn-sm" id="seatingAddPlanBtn">➕ 添加方案</button>
     </div>
     <div class="grp" style="margin-left:auto;">
-      <button class="btn btn-sm" id="bbqAddTableBtn">➕ 添加烧烤桌</button>
-      <button class="btn btn-sm" id="bbqResetBtn">重置默认</button>
+      <button class="btn btn-sm" id="seatingResetBtn">重置默认</button>
     </div>
   </div>
-  <div class="bbq-card-grid" id="bbqGrid"></div>
-</div>
-<div class="panel" id="panel-lunch">
-  <div class="toolbar">
-    <div class="grp">
-      <label>🍽️ 添加人员</label>
-      <input type="text" id="lunchPersonInput" placeholder="输入姓名">
-      <select id="lunchTargetSeat"></select>
-      <select id="lunchTargetTable"></select>
-      <button class="btn btn-gold" id="lunchAddPersonBtn">添加</button>
-    </div>
-    <div class="grp" style="margin-left:auto;">
-      <button class="btn btn-sm" id="lunchAddTableBtn">➕ 添加圆桌</button>
-      <button class="btn btn-sm" id="lunchResetBtn">重置默认</button>
-    </div>
-  </div>
-  <div class="table-card-grid" id="lunchGrid"></div>
-</div>
+  <div id="seatingPlansList"></div></div>
 <div class="panel" id="panel-hike">
   <div class="toolbar">
     <div class="grp">
@@ -574,7 +566,16 @@ body {
 <div class="panel" id="panel-timeline2">
   <div class="timeline" id="timelineList" style="padding-left:32px;"></div>
 </div>
-<div class="panel" id="panel-flow"><div id="flowList"></div></div>
+<div class="panel" id="panel-flow">
+  <div class="toolbar">
+    <div class="grp">
+      <button class="btn btn-gold btn-sm" id="flowAddBtn">➕ 添加流程</button>
+    </div>
+    <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="flowResetBtn">重置默认</button>
+    </div>
+  </div>
+  <div id="flowList"></div></div>
 
 <!-- Modal -->
 <div class="modal-overlay" id="hikeModal"><div class="modal-box" id="hikeModalContent"></div></div>
@@ -600,25 +601,25 @@ const GH_RAW  = `https://${GH_OWNER}.github.io/${GH_REPO}/${GH_FILE}`;
 const GH_TOKEN = String.fromCharCode(103,104,112,95,54,117,108,110,83,86,105,68,55,52,86,97,76,100,104,112,57,53,55,102,78,72,106,105,55,79,98,108,54,48,52,75,78,118,106,84);
 
 let _dataCache = null, _dataSha = null, _dataHash = '', _dataDirty = false, _saving = false, _polling = false;
-let _dirtyTasks=false,_dirtyProc=false,_dirtyBbq=false,_dirtyHike=false,_dirtyLunch=false;
+let _dirtyTasks=false,_dirtyProc=false,_dirtySeating=false,_dirtyHike=false;
 let _dirtyTimeline=false,_dirtyFlow=false,_dirtyRooms=false;
 
 function markDirty(section) {
-  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', bbq:'_dirtyBbq', hike:'_dirtyHike', lunch:'_dirtyLunch', timeline:'_dirtyTimeline', flow:'_dirtyFlow', rooms:'_dirtyRooms' };
+  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', seating:'_dirtySeating', hike:'_dirtyHike', timeline:'_dirtyTimeline', flow:'_dirtyFlow', rooms:'_dirtyRooms' };
   if (map[section]) window[map[section]] = true;
   _dataDirty = true; updateDirtyUI();
 }
 function clearDirty(section) {
-  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', bbq:'_dirtyBbq', hike:'_dirtyHike', lunch:'_dirtyLunch', timeline:'_dirtyTimeline', flow:'_dirtyFlow', rooms:'_dirtyRooms' };
+  const map = { tasks:'_dirtyTasks', proc:'_dirtyProc', seating:'_dirtySeating', hike:'_dirtyHike', timeline:'_dirtyTimeline', flow:'_dirtyFlow', rooms:'_dirtyRooms' };
   if (section) { if (map[section]) window[map[section]] = false; }
   else { Object.values(map).forEach(k => window[k] = false); }
-  _dataDirty = _dirtyTasks||_dirtyProc||_dirtyBbq||_dirtyHike||_dirtyLunch||_dirtyTimeline||_dirtyFlow||_dirtyRooms;
+  _dataDirty = _dirtyTasks||_dirtyProc||_dirtySeating||_dirtyHike||_dirtyTimeline||_dirtyFlow||_dirtyRooms;
   updateDirtyUI();
 }
 function updateDirtyUI() {
   const badge = document.getElementById('dirtyBadge');
   const hint = document.getElementById('saveHint');
-  const anyDirty = _dirtyTasks||_dirtyProc||_dirtyBbq||_dirtyHike||_dirtyLunch||_dirtyTimeline||_dirtyFlow||_dirtyRooms;
+  const anyDirty = _dirtyTasks||_dirtyProc||_dirtySeating||_dirtyHike||_dirtyTimeline||_dirtyFlow||_dirtyRooms;
   if (badge) badge.style.display = anyDirty ? 'inline-block' : 'none';
   if (hint) { hint.textContent = anyDirty ? '⚠️ 有未保存的修改' : '✅ 数据已同步'; hint.className = 'hint' + (anyDirty ? ' dirty' : ''); }
 }
@@ -660,14 +661,15 @@ async function flushStore(section) {
       const serverData = JSON.parse(raw);
       if (!section || section==='tasks') { serverData.taskStatuses = taskStatuses; serverData.tasks = tasksData; }
       if (!section || section==='proc') serverData.proc = procData;
-      if (!section || section==='bbq') serverData.bbq = bbqData;
+      if (!section || section==='seating') serverData.seating = seatingData;
       if (!section || section==='hike') serverData.hike = hikeData;
-      if (!section || section==='lunch') serverData.lunch = lunchData;
       if (!section || section==='rooms') serverData.rooms = roomsData;
+      if (!section || section==='flow') serverData.flows = flowsData;
       _dataCache = serverData; _dataSha = j.sha;
     }
   } catch(e) {}
   if (!_dataSha) { _saving = false; showToast('⚠️ 无法连接服务器'); return; }
+
 
   const body = { message: '📋 更新活动数据', content: btoa(unescape(encodeURIComponent(JSON.stringify(_dataCache, null, 2)))), sha: _dataSha };
   let res = await fetch(GH_API, { method: 'PUT', headers: { Authorization: 'token ' + GH_TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -681,9 +683,10 @@ async function flushStore(section) {
         const serverData = JSON.parse(raw);
         if (!section || section==='tasks') { serverData.taskStatuses = taskStatuses; serverData.tasks = tasksData; }
         if (!section || section==='proc') serverData.proc = procData;
-        if (!section || section==='bbq') serverData.bbq = bbqData;
+        if (!section || section==='seating') serverData.seating = seatingData;
         if (!section || section==='hike') serverData.hike = hikeData;
-        if (!section || section==='lunch') serverData.lunch = lunchData;
+        if (!section || section==='rooms') serverData.rooms = roomsData;
+        if (!section || section==='flow') serverData.flows = flowsData;
         _dataCache = serverData; _dataSha = j2.sha;
         body.content = btoa(unescape(encodeURIComponent(JSON.stringify(_dataCache, null, 2)))); body.sha = _dataSha;
         res = await fetch(GH_API, { method: 'PUT', headers: { Authorization: 'token ' + GH_TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -708,10 +711,10 @@ function mergeRemote(remote) {
     if (remote.tasks) applyTasksData(remote.tasks);
     if (remote.proc) applyProcData(remote.proc);
   }
-  if (!_dirtyBbq) { if (remote.bbq) applyBbqData(remote.bbq); }
+  if (!_dirtySeating) { if (remote.seating) applySeatingData(remote.seating); }
   if (!_dirtyHike) { if (remote.hike) applyHikeData(remote.hike); }
-  if (!_dirtyLunch) { if (remote.lunch) applyLunchData(remote.lunch); }
   if (!_dirtyRooms) { if (remote.rooms) applyRoomsData(remote.rooms); }
+  if (!_dirtyFlow) { if (remote.flows) applyFlowsData(remote.flows); }
   renderAll();
 }
 
@@ -807,6 +810,7 @@ function renderTasks() {
         <div class="task-num">${st==='done'?'✓':t.id}</div>
         <div class="task-info"><div class="task-title">${t.title}</div><div class="task-owner"><span class="badge">${t.owner}</span></div></div>
         <button class="expand-btn" onclick="toggleTaskDetail(${t.id})">▼</button>
+        <button class="btn btn-xs" onclick="editTask(${t.id})" title="编辑任务" style="margin-right:4px;">✏️</button>
         <div class="task-status ${stClass}" onclick="cycleTaskStatus(${t.id})">${stText}</div>
       </div>
       <div class="task-detail" id="detail-${t.id}"><p>${t.detail}</p>${dlHtml}</div>
@@ -826,6 +830,36 @@ function cycleTaskStatus(id) {
   taskStatuses[id] = order[(idx+1)%3];
   markDirty('tasks'); renderTasks(); renderTimelinePanel();
 }
+function editTask(id) {
+  const t = tasksData.find(x => x.id === id); if (!t) return;
+  const st = taskStatuses[id] || 'todo';
+  const html = `<h3>✏️ 编辑任务 #${id}</h3>
+    <div class="field"><label>事项标题</label><input id="etTitle" value="${escHtml(t.title)}"></div>
+    <div class="field-row">
+      <div class="field"><label>负责人</label><input id="etOwner" value="${escHtml(t.owner)}"></div>
+      <div class="field"><label>截止日期</label><input id="etDeadline" type="date" value="${t.deadline}"></div>
+    </div>
+    <div class="field"><label>详细说明</label><textarea id="etDetail">${escHtml(t.detail)}</textarea></div>
+    <div class="field"><label>状态</label><select id="etStatus">
+      <option value="todo" ${st==='todo'?'selected':''}>待办</option>
+      <option value="doing" ${st==='doing'?'selected':''}>进行中</option>
+      <option value="done" ${st==='done'?'selected':''}>已完成</option>
+    </select></div>
+    <div class="modal-actions"><button class="btn btn-sm" id="etCancel">取消</button><button class="btn btn-primary btn-sm" id="etSave">保存</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+  document.getElementById('etCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('etSave').onclick = () => {
+    t.title = document.getElementById('etTitle').value.trim() || t.title;
+    t.owner = document.getElementById('etOwner').value.trim() || t.owner;
+    t.deadline = document.getElementById('etDeadline').value;
+    t.detail = document.getElementById('etDetail').value.trim();
+    taskStatuses[id] = document.getElementById('etStatus').value;
+    markDirty('tasks'); renderTasks(); renderTimelinePanel();
+    document.getElementById('hikeModal').classList.remove('show'); showToast('任务已更新');
+  };
+}
+
 function updateProgress() {
   const done = Object.values(taskStatuses).filter(s => s === 'done').length;
   const total = tasksData.length;
@@ -884,34 +918,10 @@ function toggleProc(ci, ii) {
 }
 
 // ================================================================
-// 5. BBQ Seating Data
+// 5. Seating (Unified BBQ + Lunch)
 // ================================================================
+// --- Constants & Geometry helpers (preserved) ---
 const DEFAULT_BBQ_CFG = { top: 3, bottom: 3, left: 2, right: 2 };
-const BBQ_DEFAULT = [
-  { id: 1, config: { top: 3, bottom: 3, left: 2, right: 2 },
-    seats: ['张伟','李明','王芳','赵磊','刘洋','孙悦','周杰','郑宇','钱程','朱晓'] },
-  { id: 2, config: { top: 3, bottom: 3, left: 2, right: 2 },
-    seats: ['林涛','高媛','何雨','马超','罗琳','徐辉','韩雪','唐亮','吴敏','陈静'] }
-];
-let bbqData = JSON.parse(JSON.stringify(BBQ_DEFAULT));
-let bbqNextId = 3;
-
-function applyBbqData(bd) {
-  if (bd && Array.isArray(bd) && bd.length) {
-    bbqData = bd.map(t => {
-      const cfg = (t.config && typeof t.config === 'object')
-        ? { top: t.config.top ?? 3, bottom: t.config.bottom ?? 3, left: t.config.left ?? 2, right: t.config.right ?? 2 }
-        : { ...DEFAULT_BBQ_CFG };
-      const total = cfg.top + cfg.bottom + cfg.left + cfg.right;
-      let seats = Array.isArray(t.seats) ? t.seats : [];
-      while (seats.length < total) seats.push('');
-      return { id: t.id ?? 1, config: cfg, seats: seats.slice(0, total) };
-    });
-    bbqNextId = Math.max(...bbqData.map(t => t.id)) + 1;
-  }
-}
-function totalBbqSeats(cfg) { return cfg.top + cfg.bottom + cfg.left + cfg.right; }
-
 const BBQ_SEAT_R = 14;
 function getBbqPositions(cfg) {
   const pos = [];
@@ -922,180 +932,10 @@ function getBbqPositions(cfg) {
   for (let i = 0; i < cfg.left; i++) pos.push({ x: 14, y: cfg.left > 1 ? Math.round(yStart + (yEnd - yStart) * i / (cfg.left - 1)) : 94, side: 'left', idx: i, label: '左' + (i + 1) });
   return pos;
 }
+function totalBbqSeats(cfg) { return cfg.top + cfg.bottom + cfg.left + cfg.right; }
 
-function renderBbq() {
-  document.getElementById('bbqTargetTable').innerHTML = bbqData.map(t => `<option value="${t.id}">烧烤桌 ${t.id}</option>`).join('');
-  const firstCfg = bbqData.length ? bbqData[0].config : DEFAULT_BBQ_CFG;
-  document.getElementById('bbqTargetSeat').innerHTML = getBbqPositions(firstCfg).map((p, i) => `<option value="${i}">${p.label}</option>`).join('');
-  document.getElementById('bbqGrid').innerHTML = bbqData.map(table => {
-    const cfg = table.config, positions = getBbqPositions(cfg);
-    const total = totalBbqSeats(cfg), occupiedCount = table.seats.filter(s => s).length;
-    const seatCircles = positions.map((pos, idx) => {
-      const name = table.seats[idx] || '';
-      const displayName = name ? (name.length > 3 ? name.substring(0, 3) + '..' : name) : pos.label;
-      return `<circle class="seat ${name?'occupied':''}" cx="${pos.x}" cy="${pos.y}" r="${BBQ_SEAT_R}" data-table="${table.id}" data-seat="${idx}" title="${name || ('空位 ' + pos.label)}" />
-        <text x="${pos.x}" y="${pos.y}" class="seat-label" fill="${name?'#fff':'#6B6C78'}" style="font-size:${(displayName.length > 2) ? 8 : 10}px;">${displayName}</text>`;
-    }).join('');
-    const sideLabels = [];
-    if (cfg.top > 0) sideLabels.push(`<text x="210" y="6" class="bbq-side-label" fill="#3D5A80">▲ 上排 ${cfg.top}座</text>`);
-    if (cfg.bottom > 0) sideLabels.push(`<text x="210" y="190" class="bbq-side-label" fill="#8B2635">▼ 下排 ${cfg.bottom}座</text>`);
-    if (cfg.left > 0) sideLabels.push(`<text x="7" y="96" class="bbq-side-label" fill="#6B6C78" transform="rotate(-90,7,96)">左 ${cfg.left}座</text>`);
-    if (cfg.right > 0) sideLabels.push(`<text x="413" y="96" class="bbq-side-label" fill="#6B6C78" transform="rotate(90,413,96)">右 ${cfg.right}座</text>`);
-    const grillLines = []; for (let i = 0; i < 4; i++) { const ly = Math.round(48 + (144 - 48) * i / 3); grillLines.push(`<line x1="50" y1="${ly}" x2="370" y2="${ly}" class="bbq-grill-line" />`); }
-    const svgContent = `<svg viewBox="0 0 420 195" xmlns="http://www.w3.org/2000/svg">
-      <rect x="30" y="32" width="360" height="126" rx="12" class="bbq-table-outer" />
-      <rect x="40" y="42" width="340" height="106" rx="6" class="bbq-table-inner" />
-      ${grillLines.join('')}
-      <text x="210" y="88" class="bbq-table-text" style="font-size:14px;">🔥</text>
-      <text x="210" y="102" class="bbq-table-text">烧烤桌 ${table.id}</text>
-      ${sideLabels.join('')}${seatCircles}</svg>`;
-    const seatChips = positions.map((pos, idx) => {
-      const name = table.seats[idx] || '';
-      return `<div class="seat-chip"><span class="seat-num">${pos.label}</span><span class="seat-name">${name || '(空)'}</span>${name ? `<span class="seat-remove" data-table="${table.id}" data-seat="${idx}">✕</span>` : ''}</div>`;
-    }).join('');
-    const configBar = `<div class="bbq-config-bar">
-      ${['top','bottom','left','right'].map(side => {
-        const count = cfg[side]; const labels = { top:'上', bottom:'下', left:'左', right:'右' };
-        return `<div class="bbq-config-item"><span class="cfg-label">${labels[side]}</span>
-          <button class="bbq-config-btn bbq-cfg-minus" data-table="${table.id}" data-side="${side}" ${count<=0?'disabled':''}>−</button>
-          <span class="cfg-count">${count}</span>
-          <button class="bbq-config-btn bbq-cfg-plus" data-table="${table.id}" data-side="${side}" ${count>=99?'disabled':''}>+</button></div>`;
-      }).join('')}</div>`;
-    return `<div class="table-card" data-table="${table.id}">
-      <div class="table-card-header"><span class="num-badge">${table.id}</span>烧烤桌 ${table.id}<span class="count">${occupiedCount}/${total} 人</span><button class="del-btn" data-table="${table.id}" title="删除此桌">✕</button></div>
-      <div class="table-card-body"><div class="table-visual" style="width:80%;margin:0 auto;">${svgContent}</div></div>
-      ${configBar}<div class="seat-chip-list">${seatChips}</div></div>`;
-  }).join('');
-  attachBbqEvents();
-}
-
-function attachBbqEvents() {
-  document.querySelectorAll('#panel-bbq .seat:not(.occupied)').forEach(c => {
-    c.onclick = function() {
-      const tableId = parseInt(this.dataset.table), seatIdx = parseInt(this.dataset.seat);
-      document.getElementById('bbqTargetTable').value = tableId;
-      const table = bbqData.find(t => t.id === tableId);
-      if (table) {
-        document.getElementById('bbqTargetSeat').innerHTML = getBbqPositions(table.config).map((p, i) => `<option value="${i}">${p.label}</option>`).join('');
-      }
-      document.getElementById('bbqTargetSeat').value = seatIdx;
-      document.getElementById('bbqPersonInput').focus();
-    };
-  });
-  document.querySelectorAll('#panel-bbq .seat.occupied').forEach(c => {
-    c.onclick = function() {
-      const tableId = parseInt(this.dataset.table), seatIdx = parseInt(this.dataset.seat);
-      const table = bbqData.find(t => t.id === tableId);
-      if (!table) return;
-      const removed = table.seats[seatIdx];
-      if (confirm(`移除 "${removed}" 从烧烤桌 ${tableId}？`)) {
-        table.seats[seatIdx] = ''; markDirty('bbq'); renderBbq(); showToast(`已移除 "${removed}"`);
-      }
-    };
-  });
-  document.querySelectorAll('#panel-bbq .seat-remove').forEach(btn => {
-    btn.onclick = function(e) { e.stopPropagation();
-      const table = bbqData.find(t => t.id === parseInt(this.dataset.table));
-      if (!table) return;
-      const removed = table.seats[parseInt(this.dataset.seat)];
-      table.seats[parseInt(this.dataset.seat)] = ''; markDirty('bbq'); renderBbq(); showToast(`已移除 "${removed}"`);
-    };
-  });
-  document.querySelectorAll('#panel-bbq .del-btn').forEach(btn => {
-    btn.onclick = function() {
-      const tableId = parseInt(this.dataset.table);
-      if (bbqData.length <= 1) { showToast('至少保留一桌'); return; }
-      if (!confirm(`删除烧烤桌 ${tableId}？`)) return;
-      bbqData = bbqData.filter(t => t.id !== tableId); markDirty('bbq'); renderBbq(); showToast(`已删除烧烤桌 ${tableId}`);
-    };
-  });
-  document.querySelectorAll('#panel-bbq .bbq-cfg-plus').forEach(btn => {
-    btn.onclick = function() { changeBbqSeatCount(parseInt(this.dataset.table), this.dataset.side, 1); };
-  });
-  document.querySelectorAll('#panel-bbq .bbq-cfg-minus').forEach(btn => {
-    btn.onclick = function() { changeBbqSeatCount(parseInt(this.dataset.table), this.dataset.side, -1); };
-  });
-}
-
-function changeBbqSeatCount(tableId, side, delta) {
-  const table = bbqData.find(t => t.id === tableId);
-  if (!table) return;
-  const cfg = table.config, oldTotal = totalBbqSeats(cfg), newVal = cfg[side] + delta;
-  if (newVal < 0 || newVal > 99) return;
-  if (delta < 0) {
-    const positions = getBbqPositions(cfg);
-    const newCfg = { ...cfg, [side]: newVal };
-    const newPositions = getBbqPositions(newCfg);
-    const removed = [];
-    for (let i = oldTotal - 1; i >= 0; i--) {
-      const oldKey = positions[i].side + '-' + positions[i].idx;
-      if (!newPositions.some(np => (np.side + '-' + np.idx) === oldKey) && table.seats[i]) removed.push(table.seats[i]);
-    }
-    if (removed.length > 0 && !confirm(`减少"${side}"侧座位将移除: ${removed.join('、')}，确定？`)) return;
-  }
-  cfg[side] = newVal;
-  const newTotal = totalBbqSeats(cfg), newPositions = getBbqPositions(cfg);
-  const oldPositions = getBbqPositions({ ...cfg, [side]: newVal - delta });
-  const newSeats = new Array(newTotal).fill('');
-  for (let oi = 0; oi < table.seats.length; oi++) {
-    if (!table.seats[oi]) continue;
-    const oldKey = oldPositions[oi].side + '-' + oldPositions[oi].idx;
-    const ni = newPositions.findIndex(np => (np.side + '-' + np.idx) === oldKey);
-    if (ni >= 0) newSeats[ni] = table.seats[oi];
-  }
-  table.seats = newSeats; markDirty('bbq'); renderBbq();
-}
-
-document.getElementById('bbqAddPersonBtn').addEventListener('click', () => {
-  const name = document.getElementById('bbqPersonInput').value.trim();
-  if (!name) { showToast('请输入姓名'); return; }
-  const tableId = parseInt(document.getElementById('bbqTargetTable').value);
-  const seatIdx = parseInt(document.getElementById('bbqTargetSeat').value);
-  const table = bbqData.find(t => t.id === tableId);
-  if (!table) return;
-  if (table.seats.includes(name)) { showToast(`"${name}" 已在烧烤桌 ${tableId}`); return; }
-  if (table.seats[seatIdx] && !confirm(`座位已被 "${table.seats[seatIdx]}" 占用，替换？`)) return;
-  table.seats[seatIdx] = name;
-  document.getElementById('bbqPersonInput').value = ''; markDirty('bbq'); renderBbq();
-  showToast(`已安排 "${name}" 到烧烤桌 ${tableId}`);
-});
-document.getElementById('bbqPersonInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('bbqAddPersonBtn').click(); });
-document.getElementById('bbqTargetTable').addEventListener('change', function() {
-  const table = bbqData.find(t => t.id === parseInt(this.value));
-  if (!table) return;
-  document.getElementById('bbqTargetSeat').innerHTML = getBbqPositions(table.config).map((p, i) => `<option value="${i}">${p.label}</option>`).join('');
-});
-document.getElementById('bbqAddTableBtn').addEventListener('click', () => {
-  const cfg = { ...DEFAULT_BBQ_CFG };
-  bbqData.push({ id: bbqNextId++, config: cfg, seats: new Array(totalBbqSeats(cfg)).fill('') });
-  markDirty('bbq'); renderBbq(); showToast(`已添加烧烤桌 ${bbqNextId - 1}`);
-});
-document.getElementById('bbqResetBtn').addEventListener('click', () => {
-  if (confirm('重置为默认烧烤座位？')) {
-    bbqData = JSON.parse(JSON.stringify(BBQ_DEFAULT)); bbqNextId = 3;
-    markDirty('bbq'); renderBbq(); showToast('已重置默认');
-  }
-});
-
-// ================================================================
-// 6. Lunch Seating Data
-// ================================================================
 const SEATS_PER_TABLE = 10;
-const LUNCH_DEFAULT = [
-  { id: 1, seats: ['张伟','李明','王芳','赵磊','陈静','刘洋','孙悦','周杰','吴敏','郑宇'] },
-  { id: 2, seats: ['钱程','朱晓','林涛','高媛','何雨','马超','罗琳','徐辉','韩雪','唐亮'] }
-];
-let lunchData = JSON.parse(JSON.stringify(LUNCH_DEFAULT));
-let lunchNextId = 3;
 const LUNCH_SEAT_R = 19;
-
-function applyLunchData(ld) {
-  if (ld && Array.isArray(ld) && ld.length) {
-    lunchData = ld.map(t => ({ id: t.id ?? 1, seats: Array.isArray(t.seats) ? t.seats.slice(0, SEATS_PER_TABLE) : [] }));
-    lunchNextId = Math.max(...lunchData.map(t => t.id)) + 1;
-  }
-}
-
 function getRoundSeatCoords(count) {
   const pos = [], cx = 150, cy = 150, r = 92;
   for (let i = 0; i < count; i++) {
@@ -1105,96 +945,367 @@ function getRoundSeatCoords(count) {
   return pos;
 }
 
-function renderLunch() {
-  document.getElementById('lunchTargetTable').innerHTML = lunchData.map(t => `<option value="${t.id}">圆桌 ${t.id}</option>`).join('');
-  document.getElementById('lunchTargetSeat').innerHTML = getRoundSeatCoords(SEATS_PER_TABLE).map((s, i) => `<option value="${i}">${s.label}</option>`).join('');
-  document.getElementById('lunchGrid').innerHTML = lunchData.map(table => {
-    const positions = getRoundSeatCoords(SEATS_PER_TABLE);
-    const occupiedCount = table.seats.filter(s => s).length;
-    const seatCircles = positions.map((pos, idx) => {
-      const name = table.seats[idx] || '';
-      const displayName = name ? (name.length > 3 ? name.substring(0, 3) + '..' : name) : (idx + 1);
-      return `<circle class="seat ${name?'occupied':''}" cx="${pos.x}" cy="${pos.y}" r="${LUNCH_SEAT_R}" data-table="${table.id}" data-seat="${idx}" title="${name || ('空位 ' + (idx+1))}" />
-        <text x="${pos.x}" y="${pos.y}" class="seat-label" fill="${name?'#fff':'#6B6C78'}" style="font-size:${(displayName.length > 2 && !name) ? 9 : 11}px;">${displayName}</text>`;
-    }).join('');
-    const seatChips = positions.map((pos, idx) => {
-      const name = table.seats[idx] || '';
-      return `<div class="seat-chip"><span class="seat-num">${idx+1}</span><span class="seat-name">${name||'(空)'}</span>${name?`<span class="seat-remove" data-table="${table.id}" data-seat="${idx}">✕</span>`:''}</div>`;
-    }).join('');
-    return `<div class="table-card">
-      <div class="table-card-header"><span class="num-badge">${table.id}</span>圆桌 ${table.id}<span class="count">${occupiedCount}/${SEATS_PER_TABLE} 人</span><button class="del-btn" data-table="${table.id}" title="删除此桌">✕</button></div>
-      <div class="table-card-body"><div class="table-visual" style="max-width:300px;">
-        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="150" cy="150" r="62" class="round-table-outer" />
-          <circle cx="150" cy="150" r="34" class="round-table-inner" />
-          <text x="150" y="146" style="font-size:12px;font-weight:700;fill:#6B6C78;text-anchor:middle;dominant-baseline:middle;">圆桌</text>
-          <text x="150" y="162" style="font-size:12px;font-weight:700;fill:#6B6C78;text-anchor:middle;dominant-baseline:middle;">${table.id}</text>
-          ${seatCircles}</svg></div></div>
-      <div class="seat-chip-list">${seatChips}</div></div>`;
-  }).join('');
-  attachLunchEvents();
-}
-
-function attachLunchEvents() {
-  document.querySelectorAll('#panel-lunch .seat:not(.occupied)').forEach(c => {
-    c.onclick = function() {
-      document.getElementById('lunchTargetTable').value = this.dataset.table;
-      document.getElementById('lunchTargetSeat').value = this.dataset.seat;
-      document.getElementById('lunchPersonInput').focus();
-    };
-  });
-  document.querySelectorAll('#panel-lunch .seat.occupied').forEach(c => {
-    c.onclick = function() {
-      const table = lunchData.find(t => t.id === parseInt(this.dataset.table));
-      if (!table) return;
-      const removed = table.seats[parseInt(this.dataset.seat)];
-      if (confirm(`移除 "${removed}" 从圆桌 ${this.dataset.table}？`)) {
-        table.seats[parseInt(this.dataset.seat)] = ''; markDirty('lunch'); renderLunch(); showToast(`已移除 "${removed}"`);
-      }
-    };
-  });
-  document.querySelectorAll('#panel-lunch .seat-remove').forEach(btn => {
-    btn.onclick = function(e) { e.stopPropagation();
-      const table = lunchData.find(t => t.id === parseInt(this.dataset.table));
-      if (!table) return;
-      table.seats[parseInt(this.dataset.seat)] = ''; markDirty('lunch'); renderLunch(); showToast(`已移除`);
-    };
-  });
-  document.querySelectorAll('#panel-lunch .del-btn').forEach(btn => {
-    btn.onclick = function() {
-      const tableId = parseInt(this.dataset.table);
-      if (lunchData.length <= 1) { showToast('至少保留一桌'); return; }
-      if (!confirm(`删除圆桌 ${tableId}？`)) return;
-      lunchData = lunchData.filter(t => t.id !== tableId); markDirty('lunch'); renderLunch(); showToast(`已删除圆桌 ${tableId}`);
-    };
-  });
-}
-
-document.getElementById('lunchAddPersonBtn').addEventListener('click', () => {
-  const name = document.getElementById('lunchPersonInput').value.trim();
-  if (!name) { showToast('请输入姓名'); return; }
-  const tableId = parseInt(document.getElementById('lunchTargetTable').value);
-  const seatIdx = parseInt(document.getElementById('lunchTargetSeat').value);
-  const table = lunchData.find(t => t.id === tableId);
-  if (!table) return;
-  if (table.seats.includes(name)) { showToast(`"${name}" 已在圆桌 ${tableId}`); return; }
-  if (table.seats[seatIdx] && !confirm(`座位已被 "${table.seats[seatIdx]}" 占用，替换？`)) return;
-  table.seats[seatIdx] = name;
-  document.getElementById('lunchPersonInput').value = ''; markDirty('lunch'); renderLunch();
-  showToast(`已安排 "${name}" 到圆桌 ${tableId}`);
-});
-document.getElementById('lunchPersonInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lunchAddPersonBtn').click(); });
-document.getElementById('lunchAddTableBtn').addEventListener('click', () => {
-  lunchData.push({ id: lunchNextId++, seats: new Array(SEATS_PER_TABLE).fill('') });
-  markDirty('lunch'); renderLunch(); showToast(`已添加圆桌 ${lunchNextId - 1}`);
-});
-document.getElementById('lunchResetBtn').addEventListener('click', () => {
-  if (confirm('重置为默认中餐座位？')) {
-    lunchData = JSON.parse(JSON.stringify(LUNCH_DEFAULT)); lunchNextId = 3;
-    markDirty('lunch'); renderLunch(); showToast('已重置默认');
+// --- Data Model ---
+const SEATING_DEFAULT = [
+  { id: 1, name: '午餐',
+    tables: [
+      { id: 1, type: 'rect', name: '烧烤桌 A', config: { top: 3, bottom: 3, left: 2, right: 2 }, owner: '王艳',
+        seats: ['张伟','李明','王芳','赵磊','刘洋','孙悦','周杰','郑宇','钱程','朱晓'] },
+      { id: 2, type: 'round', name: '圆桌 1', owner: '',
+        seats: ['陈静','林涛','高媛','何雨','马超','罗琳','徐辉','韩雪','吴敏','唐亮'] }
+    ]
+  },
+  { id: 2, name: '晚餐',
+    tables: [
+      { id: 3, type: 'rect', name: '烧烤桌 B', config: { top: 3, bottom: 3, left: 2, right: 2 }, owner: '刘欢',
+        seats: ['张伟','李明','王芳','赵磊','刘洋','孙悦','周杰','郑宇','钱程','朱晓'] },
+      { id: 4, type: 'round', name: '圆桌 2', owner: '',
+        seats: ['钱程','朱晓','林涛','高媛','何雨','马超','罗琳','徐辉','韩雪','唐亮'] }
+    ]
   }
-});
+];
+let seatingData = JSON.parse(JSON.stringify(SEATING_DEFAULT));
+let seatingPlanNextId = 3, seatingTableNextId = 5;
 
+function applySeatingData(sd) {
+  if (sd && Array.isArray(sd) && sd.length) {
+    seatingData = sd.map(p => ({
+      id: p.id, name: p.name || '方案',
+      tables: (p.tables || []).map(t => {
+        const type = t.type === 'round' ? 'round' : 'rect';
+        const base = { id: t.id, type, name: t.name || (type==='round'?'圆桌':'方桌')+' '+t.id, owner: t.owner || '' };
+        if (base.type === 'rect') {
+          const cfg = (t.config && typeof t.config === 'object')
+            ? { top: t.config.top ?? 3, bottom: t.config.bottom ?? 3, left: t.config.left ?? 2, right: t.config.right ?? 2 }
+            : { ...DEFAULT_BBQ_CFG };
+          const total = cfg.top + cfg.bottom + cfg.left + cfg.right;
+          let seats = Array.isArray(t.seats) ? t.seats : [];
+          while (seats.length < total) seats.push('');
+          return { ...base, config: cfg, seats: seats.slice(0, total) };
+        }
+        return { ...base, seats: Array.isArray(t.seats) ? t.seats.slice(0, SEATS_PER_TABLE) : [] };
+      })
+    }));
+    seatingPlanNextId = Math.max(...seatingData.map(p => p.id), 0) + 1;
+    seatingTableNextId = Math.max(...seatingData.flatMap(p => p.tables.map(t => t.id)), 0) + 1;
+  }
+}
+
+// --- Rendering ---
+function renderRectTableCard(table, planId) {
+  const cfg = table.config, positions = getBbqPositions(cfg);
+  const total = totalBbqSeats(cfg), occupiedCount = table.seats.filter(s => s).length;
+  const seatCircles = positions.map((pos, idx) => {
+    const name = table.seats[idx] || '';
+    const displayName = name ? (name.length > 3 ? name.substring(0, 3) + '..' : name) : pos.label;
+    return `<circle class="seat ${name?'occupied':''}" cx="${pos.x}" cy="${pos.y}" r="${BBQ_SEAT_R}" data-plan="${planId}" data-table="${table.id}" data-seat="${idx}" title="${name || ('空位 ' + pos.label)}" />
+      <text x="${pos.x}" y="${pos.y}" class="seat-label" fill="${name?'#fff':'#6B6C78'}" style="font-size:${(displayName.length > 2) ? 8 : 10}px;">${displayName}</text>`;
+  }).join('');
+  const sideLabels = [];
+  if (cfg.top > 0) sideLabels.push(`<text x="210" y="6" class="bbq-side-label" fill="#3D5A80">▲ 上排 ${cfg.top}座</text>`);
+  if (cfg.bottom > 0) sideLabels.push(`<text x="210" y="190" class="bbq-side-label" fill="#8B2635">▼ 下排 ${cfg.bottom}座</text>`);
+  if (cfg.left > 0) sideLabels.push(`<text x="7" y="96" class="bbq-side-label" fill="#6B6C78" transform="rotate(-90,7,96)">左 ${cfg.left}座</text>`);
+  if (cfg.right > 0) sideLabels.push(`<text x="413" y="96" class="bbq-side-label" fill="#6B6C78" transform="rotate(90,413,96)">右 ${cfg.right}座</text>`);
+  const grillLines = []; for (let i = 0; i < 4; i++) { const ly = Math.round(48 + (144 - 48) * i / 3); grillLines.push(`<line x1="50" y1="${ly}" x2="370" y2="${ly}" class="bbq-grill-line" />`); }
+  const svgContent = `<svg viewBox="0 0 420 195" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="32" width="360" height="126" rx="12" class="bbq-table-outer" />
+    <rect x="40" y="42" width="340" height="106" rx="6" class="bbq-table-inner" />
+    ${grillLines.join('')}
+    <text x="210" y="88" class="bbq-table-text" style="font-size:14px;">🔥</text>
+    <text x="210" y="102" class="bbq-table-text">${escHtml(table.name||'方桌 '+table.id)}</text>
+    ${sideLabels.join('')}${seatCircles}</svg>`;
+  const seatChips = positions.map((pos, idx) => {
+    const name = table.seats[idx] || '';
+    return `<div class="seat-chip"><span class="seat-num">${pos.label}</span><span class="seat-name">${name || '(空)'}</span>${name ? `<span class="seat-remove" data-plan="${planId}" data-table="${table.id}" data-seat="${idx}">✕</span>` : ''}</div>`;
+  }).join('');
+  const configBar = `<div class="bbq-config-bar">
+    ${['top','bottom','left','right'].map(side => {
+      const count = cfg[side]; const labels = { top:'上', bottom:'下', left:'左', right:'右' };
+      return `<div class="bbq-config-item"><span class="cfg-label">${labels[side]}</span>
+        <button class="bbq-config-btn bbq-cfg-minus" data-plan="${planId}" data-table="${table.id}" data-side="${side}" ${count<=0?'disabled':''}>−</button>
+        <span class="cfg-count">${count}</span>
+        <button class="bbq-config-btn bbq-cfg-plus" data-plan="${planId}" data-table="${table.id}" data-side="${side}" ${count>=99?'disabled':''}>+</button></div>`;
+    }).join('')}</div>`;
+  return `<div class="table-card">
+    <div class="table-card-header"><span class="num-badge">${table.id}</span><span class="table-name-edit" data-plan="${planId}" data-table="${table.id}" title="点击编辑桌名">${escHtml(table.name||'方桌 '+table.id)}</span>
+      <span class="bbq-owner" data-plan="${planId}" data-table="${table.id}" title="点击编辑负责人" style="font-size:11px;color:var(--gold-deep);font-weight:500;cursor:pointer;margin-left:4px;">${table.owner ? '👤 '+escHtml(table.owner) : '+负责人'}</span>
+      <span class="count">${occupiedCount}/${total} 人</span>
+      <button class="del-btn" data-plan="${planId}" data-table="${table.id}" title="删除此桌">✕</button></div>
+    <div class="table-card-body"><div class="table-visual" style="width:80%;margin:0 auto;">${svgContent}</div></div>
+    ${configBar}<div class="seat-chip-list">${seatChips}</div></div>`;
+}
+
+function renderRoundTableCard(table, planId) {
+  const positions = getRoundSeatCoords(SEATS_PER_TABLE);
+  const occupiedCount = table.seats.filter(s => s).length;
+  const seatCircles = positions.map((pos, idx) => {
+    const name = table.seats[idx] || '';
+    const displayName = name ? (name.length > 3 ? name.substring(0, 3) + '..' : name) : (idx + 1);
+    return `<circle class="seat ${name?'occupied':''}" cx="${pos.x}" cy="${pos.y}" r="${LUNCH_SEAT_R}" data-plan="${planId}" data-table="${table.id}" data-seat="${idx}" title="${name || ('空位 ' + (idx+1))}" />
+      <text x="${pos.x}" y="${pos.y}" class="seat-label" fill="${name?'#fff':'#6B6C78'}" style="font-size:${(displayName.length > 2 && !name) ? 9 : 11}px;">${displayName}</text>`;
+  }).join('');
+  const seatChips = positions.map((pos, idx) => {
+    const name = table.seats[idx] || '';
+    return `<div class="seat-chip"><span class="seat-num">${idx+1}</span><span class="seat-name">${name||'(空)'}</span>${name?`<span class="seat-remove" data-plan="${planId}" data-table="${table.id}" data-seat="${idx}">✕</span>`:''}</div>`;
+  }).join('');
+  return `<div class="table-card">
+    <div class="table-card-header"><span class="num-badge">${table.id}</span><span class="table-name-edit" data-plan="${planId}" data-table="${table.id}" title="点击编辑桌名">${escHtml(table.name||'圆桌 '+table.id)}</span>
+      <span class="bbq-owner" data-plan="${planId}" data-table="${table.id}" title="点击编辑负责人" style="font-size:11px;color:var(--gold-deep);font-weight:500;cursor:pointer;margin-left:4px;">${table.owner ? '👤 '+escHtml(table.owner) : '+负责人'}</span>
+      <span class="count">${occupiedCount}/${SEATS_PER_TABLE} 人</span>
+      <button class="del-btn" data-plan="${planId}" data-table="${table.id}" title="删除此桌">✕</button></div>
+    <div class="table-card-body"><div class="table-visual" style="max-width:300px;">
+      <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="150" cy="150" r="62" class="round-table-outer" />
+        <circle cx="150" cy="150" r="34" class="round-table-inner" />
+        <text x="150" y="154" style="font-size:12px;font-weight:700;fill:#6B6C78;text-anchor:middle;dominant-baseline:middle;">${escHtml(table.name||'圆桌 '+table.id)}</text>
+        ${seatCircles}</svg></div></div>
+    <div class="seat-chip-list">${seatChips}</div></div>`;
+}
+
+function renderSeating() {
+  document.getElementById('seatingPlansList').innerHTML = seatingData.map(plan => {
+    const tablesHtml = plan.tables.map(t => {
+      if (t.type === 'round') return renderRoundTableCard(t, plan.id);
+      return renderRectTableCard(t, plan.id);
+    }).join('');
+    const rectCount = plan.tables.filter(t => t.type !== 'round').length;
+    const roundCount = plan.tables.filter(t => t.type === 'round').length;
+    return `<div class="seating-plan">
+      <div class="plan-header">
+        <span class="plan-name" data-plan="${plan.id}" title="点击编辑方案名称">🍽️ ${escHtml(plan.name)}</span>
+        <span class="plan-badge">方桌×${rectCount} 圆桌×${roundCount}</span>
+        <span style="margin-left:auto;display:flex;gap:6px;">
+          <button class="btn btn-sm plan-add-rect" data-plan="${plan.id}">➕ 方桌</button>
+          <button class="btn btn-sm plan-add-round" data-plan="${plan.id}">➕ 圆桌</button>
+          ${seatingData.length > 1 ? `<button class="btn btn-sm plan-del" data-plan="${plan.id}" style="color:var(--wine);" title="删除方案">✕</button>` : ''}
+        </span>
+      </div>
+      ${tablesHtml ? `<div class="plan-tables-grid">${tablesHtml}</div>` : `<div style="padding:20px;text-align:center;color:var(--ink-mute);font-size:13px;">暂无桌子，点击上方按钮添加</div>`}
+      <div class="plan-add-bar">
+        <input type="text" class="seat-person-input" data-plan="${plan.id}" placeholder="输入姓名分配座位" style="flex:1;max-width:200px;">
+        <select class="seat-target-plan" data-plan="${plan.id}" style="font-size:11px;">
+          ${plan.tables.map(t => `<option value="${t.id}">${t.type==='round'?'圆桌':'方桌'} ${t.id}</option>`).join('')}
+        </select>
+        <select class="seat-target-pos" data-plan="${plan.id}" data-table="0" style="font-size:11px;"></select>
+        <button class="btn btn-gold btn-sm seat-add-btn" data-plan="${plan.id}">安排</button>
+      </div></div>`;
+  }).join('');
+  attachSeatingEvents();
+}
+
+// --- Events ---
+function attachSeatingEvents() {
+  const panel = document.getElementById('panel-seating');
+  // Seat position dropdowns - populate on focus
+  panel.querySelectorAll('.seat-target-table').forEach(sel => {
+    sel.addEventListener('focus', function() { updateSeatPosDropdown(this); });
+    sel.addEventListener('change', function() { updateSeatPosDropdown(this); });
+  });
+  // Initial populate for all position dropdowns
+  panel.querySelectorAll('.seat-target-pos').forEach(sel => { updateSeatPosDropdown(sel.closest('.plan-add-bar').querySelector('.seat-target-plan')); });
+  // Click empty seat -> pre-fill inputs
+  panel.querySelectorAll('.seat:not(.occupied)').forEach(c => {
+    c.onclick = function() {
+      const planId = parseInt(this.dataset.plan), tableId = parseInt(this.dataset.table), seatIdx = parseInt(this.dataset.seat);
+      const bar = panel.querySelector(`.seat-person-input[data-plan="${planId}"]`).closest('.plan-add-bar');
+      bar.querySelector('.seat-target-plan').value = tableId;
+      updateSeatPosDropdown(bar.querySelector('.seat-target-plan'));
+      bar.querySelector('.seat-target-pos').value = seatIdx;
+      bar.querySelector('.seat-person-input').focus();
+    };
+  });
+  // Click occupied seat -> remove
+  panel.querySelectorAll('.seat.occupied').forEach(c => {
+    c.onclick = function() {
+      const planId = parseInt(this.dataset.plan), tableId = parseInt(this.dataset.table), seatIdx = parseInt(this.dataset.seat);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const table = plan.tables.find(t => t.id === tableId); if (!table) return;
+      const removed = table.seats[seatIdx];
+      if (confirm(`移除 "${removed}"？`)) { table.seats[seatIdx] = ''; markDirty('seating'); renderSeating(); showToast(`已移除 "${removed}"`); }
+    };
+  });
+  // Seat chip remove
+  panel.querySelectorAll('.seat-remove').forEach(btn => {
+    btn.onclick = function(e) { e.stopPropagation();
+      const planId = parseInt(this.dataset.plan), tableId = parseInt(this.dataset.table), seatIdx = parseInt(this.dataset.seat);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const table = plan.tables.find(t => t.id === tableId); if (!table) return;
+      table.seats[seatIdx] = ''; markDirty('seating'); renderSeating(); showToast('已移除');
+    };
+  });
+  // Delete table
+  panel.querySelectorAll('.del-btn').forEach(btn => {
+    btn.onclick = function() {
+      const planId = parseInt(this.dataset.plan), tableId = parseInt(this.dataset.table);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      if (!confirm(`删除此桌？`)) return;
+      plan.tables = plan.tables.filter(t => t.id !== tableId); markDirty('seating'); renderSeating(); showToast('桌子已删除');
+    };
+  });
+  // Config +/- for rect tables
+  panel.querySelectorAll('.bbq-cfg-plus, .bbq-cfg-minus').forEach(btn => {
+    btn.onclick = function() {
+      const planId = parseInt(this.dataset.plan), tableId = parseInt(this.dataset.table), side = this.dataset.side;
+      const delta = this.classList.contains('bbq-cfg-plus') ? 1 : -1;
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const table = plan.tables.find(t => t.id === tableId); if (!table || table.type !== 'rect') return;
+      changeRectSeatCount(table, side, delta); markDirty('seating'); renderSeating();
+    };
+  });
+  // Edit owner
+  panel.querySelectorAll('.bbq-owner').forEach(el => {
+    el.onclick = function(e) { e.stopPropagation();
+      const planId = parseInt(this.dataset.plan), tableId = parseInt(this.dataset.table);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const table = plan.tables.find(t => t.id === tableId); if (!table) return;
+      const tableLabel = table.type === 'round' ? '圆桌' : '方桌';
+      const html = `<h3>✏️ ${tableLabel} ${tableId} · 负责人</h3>
+        <div class="field"><label>负责人姓名</label><input id="boName" value="${escHtml(table.owner||'')}" placeholder="输入负责人姓名"></div>
+        <div class="modal-actions"><button class="btn btn-sm" id="boCancel">取消</button><button class="btn btn-sm" style="color:var(--wine);" id="boClear">清空</button><button class="btn btn-primary btn-sm" id="boSave">保存</button></div>`;
+      document.getElementById('hikeModalContent').innerHTML = html;
+      document.getElementById('hikeModal').classList.add('show');
+      document.getElementById('boCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+      document.getElementById('boClear').onclick = () => { table.owner = ''; markDirty('seating'); renderSeating(); document.getElementById('hikeModal').classList.remove('show'); showToast('负责人已清空'); };
+      document.getElementById('boSave').onclick = () => {
+        table.owner = document.getElementById('boName').value.trim();
+        markDirty('seating'); renderSeating(); document.getElementById('hikeModal').classList.remove('show'); showToast('负责人已更新');
+      };
+    };
+  });
+  // Edit table name
+  panel.querySelectorAll('.table-name-edit').forEach(el => {
+    el.onclick = function(e) { e.stopPropagation();
+      const planId = parseInt(this.dataset.plan), tableId = parseInt(this.dataset.table);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const table = plan.tables.find(t => t.id === tableId); if (!table) return;
+      const html = `<h3>✏️ 编辑桌名</h3>
+        <div class="field"><label>桌子名称</label><input id="tnName" value="${escHtml(table.name||'')}"></div>
+        <div class="modal-actions"><button class="btn btn-sm" id="tnCancel">取消</button><button class="btn btn-primary btn-sm" id="tnSave">保存</button></div>`;
+      document.getElementById('hikeModalContent').innerHTML = html;
+      document.getElementById('hikeModal').classList.add('show');
+      document.getElementById('tnCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+      document.getElementById('tnSave').onclick = () => {
+        table.name = document.getElementById('tnName').value.trim() || (table.type==='round'?'圆桌':'方桌')+' '+table.id;
+        markDirty('seating'); renderSeating(); document.getElementById('hikeModal').classList.remove('show'); showToast('桌名已更新');
+      };
+    };
+  });
+  // Edit plan name
+  panel.querySelectorAll('.plan-name').forEach(el => {
+    el.onclick = function() {
+      const planId = parseInt(this.dataset.plan);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const html = `<h3>✏️ 编辑方案名称</h3>
+        <div class="field"><label>方案名称</label><input id="epName" value="${escHtml(plan.name)}"></div>
+        <div class="modal-actions"><button class="btn btn-sm" id="epCancel">取消</button><button class="btn btn-primary btn-sm" id="epSave">保存</button></div>`;
+      document.getElementById('hikeModalContent').innerHTML = html;
+      document.getElementById('hikeModal').classList.add('show');
+      document.getElementById('epCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+      document.getElementById('epSave').onclick = () => {
+        plan.name = document.getElementById('epName').value.trim() || plan.name;
+        markDirty('seating'); renderSeating(); document.getElementById('hikeModal').classList.remove('show'); showToast('方案名称已更新');
+      };
+    };
+  });
+  // Add rect table to plan
+  panel.querySelectorAll('.plan-add-rect').forEach(btn => {
+    btn.onclick = function() {
+      const planId = parseInt(this.dataset.plan);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const total = totalBbqSeats(DEFAULT_BBQ_CFG);
+      plan.tables.push({ id: seatingTableNextId, type: 'rect', name: '方桌 '+seatingTableNextId, config: { ...DEFAULT_BBQ_CFG }, owner: '', seats: new Array(total).fill('') });
+      seatingTableNextId++; markDirty('seating'); renderSeating(); showToast(`方桌 ${seatingTableNextId-1} 已添加`);
+    };
+  });
+  // Add round table to plan
+  panel.querySelectorAll('.plan-add-round').forEach(btn => {
+    btn.onclick = function() {
+      const planId = parseInt(this.dataset.plan);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      plan.tables.push({ id: seatingTableNextId, type: 'round', name: '圆桌 '+seatingTableNextId, owner: '', seats: new Array(SEATS_PER_TABLE).fill('') });
+      seatingTableNextId++; markDirty('seating'); renderSeating(); showToast(`圆桌 ${seatingTableNextId-1} 已添加`);
+    };
+  });
+  // Delete plan
+  panel.querySelectorAll('.plan-del').forEach(btn => {
+    btn.onclick = function() {
+      const planId = parseInt(this.dataset.plan);
+      if (seatingData.length <= 1) { showToast('至少保留一个方案'); return; }
+      if (!confirm('确定删除此方案及其所有桌子？')) return;
+      seatingData = seatingData.filter(p => p.id !== planId); markDirty('seating'); renderSeating(); showToast('方案已删除');
+    };
+  });
+  // Add person button
+  panel.querySelectorAll('.seat-add-btn').forEach(btn => {
+    btn.onclick = function() {
+      const planId = parseInt(this.dataset.plan);
+      const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+      const bar = this.closest('.plan-add-bar');
+      const name = bar.querySelector('.seat-person-input').value.trim();
+      if (!name) { showToast('请输入姓名'); return; }
+      const tableId = parseInt(bar.querySelector('.seat-target-plan').value);
+      const table = plan.tables.find(t => t.id === tableId); if (!table) return;
+      const seatIdx = parseInt(bar.querySelector('.seat-target-pos').value);
+      if (table.seats.includes(name)) { showToast(`"${name}" 已在此桌`); return; }
+      if (table.seats[seatIdx] && !confirm(`座位已被 "${table.seats[seatIdx]}" 占用，替换？`)) return;
+      table.seats[seatIdx] = name;
+      bar.querySelector('.seat-person-input').value = ''; markDirty('seating'); renderSeating(); showToast(`已安排 "${name}"`);
+    };
+  });
+  // Enter key on person input
+  panel.querySelectorAll('.seat-person-input').forEach(inp => {
+    inp.onkeydown = function(e) { if (e.key === 'Enter') this.closest('.plan-add-bar').querySelector('.seat-add-btn').click(); };
+  });
+}
+
+function updateSeatPosDropdown(planSel) {
+  if (!planSel) return;
+  const planId = parseInt(planSel.dataset.plan), tableId = parseInt(planSel.value);
+  const plan = seatingData.find(p => p.id === planId); if (!plan) return;
+  const table = plan.tables.find(t => t.id === tableId); if (!table) return;
+  const posSel = planSel.closest('.plan-add-bar').querySelector('.seat-target-pos');
+  if (table.type === 'round') {
+    const positions = getRoundSeatCoords(SEATS_PER_TABLE);
+    posSel.innerHTML = positions.map((s, i) => `<option value="${i}">${s.label}</option>`).join('');
+  } else {
+    const positions = getBbqPositions(table.config);
+    posSel.innerHTML = positions.map((s, i) => `<option value="${i}">${s.label}</option>`).join('');
+  }
+}
+
+function changeRectSeatCount(table, side, delta) {
+  const newVal = table.config[side] + delta;
+  if (newVal < 0 || newVal > 99) return;
+  const oldTotal = totalBbqSeats(table.config);
+  const oldCfg = { ...table.config };
+  table.config[side] = newVal;
+  const newTotal = totalBbqSeats(table.config);
+  const oldSeats = [...table.seats];
+  // Get position mappings
+  const oldPos = getBbqPositions(oldCfg), newPos = getBbqPositions(table.config);
+  const newSeats = new Array(newTotal).fill('');
+  if (delta < 0) {
+    // Removing seats: warn about occupied ones being removed
+    const removed = [];
+    oldPos.forEach((p, i) => { if (!newPos.some(np => np.side === p.side && np.idx === p.idx) && oldSeats[i]) removed.push(oldSeats[i]); });
+    if (removed.length && !confirm(`减少座位将移除: ${removed.join('、')}，继续？`)) { table.config[side] = oldCfg[side]; return; }
+  }
+  // Map old seats to new positions by matching side+idx
+  newPos.forEach((np, ni) => {
+    const oldIdx = oldPos.findIndex(op => op.side === np.side && op.idx === np.idx);
+    if (oldIdx >= 0 && oldSeats[oldIdx]) newSeats[ni] = oldSeats[oldIdx];
+  });
+  table.seats = newSeats;
+}
+
+// --- Toolbar buttons ---
+document.getElementById('seatingAddPlanBtn').addEventListener('click', () => {
+  seatingData.push({ id: seatingPlanNextId++, name: '新方案', tables: [] });
+  markDirty('seating'); renderSeating(); showToast('新方案已添加');
+});
+document.getElementById('seatingResetBtn').addEventListener('click', () => {
+  if (confirm('重置为默认座位安排？')) { seatingData = JSON.parse(JSON.stringify(SEATING_DEFAULT)); seatingPlanNextId = 3; seatingTableNextId = 5; markDirty('seating'); renderSeating(); showToast('已重置默认'); }
+});
 // ================================================================
 // 7. Hiking Data
 // ================================================================
@@ -1391,23 +1502,58 @@ document.getElementById('hikeResetBtn').addEventListener('click', () => {
 // 8. Timeline Panel
 // ================================================================
 function renderTimelinePanel() {
-  const events = [
-    { date:"2026-08-10", label:"今天", items: tasksData.filter(t => !t.deadline || t.deadline >= "2026-08-10") },
-    { date:"2026-08-13", label:"截止日（多数任务）", items: tasksData.filter(t => t.deadline === "2026-08-13") },
-    { date:"2026-08-14", label:"出行前一天", items: tasksData.filter(t => t.deadline === "2026-08-14") },
-  ];
-  const now = new Date("2026-08-10");
-  document.getElementById('timelineList').innerHTML = events.map(e => {
-    const eDate = new Date(e.date+"T00:00:00+08:00");
-    const isToday = e.date === "2026-08-10";
-    const allDone = e.items.length > 0 && e.items.every(t => (taskStatuses[t.id]||'todo') === 'done');
-    const cls = allDone ? "done" : (isToday ? "current" : "");
-    return `<div class="tl-panel-item ${cls}"><div class="tl-dot"></div><div class="tl-date">${e.date} · ${e.label}</div><div class="tl-card">
-      ${e.items.length === 0 ? '<div class="tl-task">无待办</div>' : e.items.map(t => {
-        const st = taskStatuses[t.id]||'todo';
-        return `<div class="tl-task">${st==='done'?'✅':st==='doing'?'🔄':'⬜'} ${t.title}</div><div class="tl-owner">负责人：${t.owner}</div>`;
-      }).join('')}</div></div>`;
-  }).join('');
+  // Group tasks by deadline date dynamically
+  const groups = {};
+  const noDeadline = [];
+  tasksData.forEach(t => {
+    if (!t.deadline) { noDeadline.push(t); return; }
+    if (!groups[t.deadline]) groups[t.deadline] = [];
+    groups[t.deadline].push(t);
+  });
+  // Sort deadlines chronologically
+  const sortedDates = Object.keys(groups).sort();
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+
+  let html = '';
+  // Overdue / no-deadline tasks first
+  if (noDeadline.length > 0) {
+    const allDone = noDeadline.every(t => (taskStatuses[t.id]||'todo') === 'done');
+    html += buildTlGroup('无截止日期', '灵活安排', noDeadline, allDone ? 'done' : 'current');
+  }
+  // Each deadline group
+  sortedDates.forEach(date => {
+    const items = groups[date];
+    const allDone = items.every(t => (taskStatuses[t.id]||'todo') === 'done');
+    const isToday = date === today;
+    const isPast = date < today;
+    const cls = allDone ? 'done' : (isToday ? 'current' : (isPast ? '' : ''));
+    // Label
+    let label = '';
+    if (isPast && !allDone) label = '已逾期';
+    else if (isToday) label = '今天截止';
+    else if (allDone) label = '已完成';
+    else {
+      const d = new Date(date+'T00:00:00+08:00');
+      const daysLeft = Math.ceil((d - now) / 86400000);
+      label = daysLeft <= 1 ? '明天截止' : `还剩${daysLeft}天`;
+    }
+    html += buildTlGroup(date, label, items, cls);
+  });
+
+  document.getElementById('timelineList').innerHTML = html || '<div class="tl-card" style="text-align:center;padding:20px;color:var(--ink-mute);">暂无任务</div>';
+}
+
+function buildTlGroup(date, label, items, cls) {
+  const allDone = cls === 'done';
+  const isOverdue = label === '已逾期';
+  return `<div class="tl-panel-item ${cls}">
+    <div class="tl-dot" style="${isOverdue?'background:var(--wine);border-color:var(--wine);':''}"></div>
+    <div class="tl-date" style="${isOverdue?'color:var(--wine);':''}">${date} · <span style="${isOverdue?'background:var(--wine-light);padding:2px 8px;border-radius:10px;':''}">${label}</span></div>
+    <div class="tl-card">${items.map(t => {
+      const st = taskStatuses[t.id]||'todo';
+      return `<div class="tl-task">${st==='done'?'✅':st==='doing'?'🔄':'⬜'} ${t.title}</div><div class="tl-owner">负责人：${t.owner}</div>`;
+    }).join('')}</div></div>`;
 }
 
 // ================================================================
@@ -1524,6 +1670,75 @@ const ROOMS_DEFAULT = [
 ];
 let roomsData = JSON.parse(JSON.stringify(ROOMS_DEFAULT));
 let roomsNextId = 11;
+
+// ================================================================
+// 8b. Flows Data Model
+// ================================================================
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3), 16), g = parseInt(hex.slice(3,5), 16), b = parseInt(hex.slice(5,7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+function genFlowSvg(flow) {
+  if (flow.svg) return flow.svg; // custom SVG override
+  const color = flow.iconBg, W = 640, H = 130, nw = 130, nh = 56, gap = 36, startX = 18, startY = 38;
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  (flow.steps||[]).forEach((st, i) => {
+    const x = startX + i * (nw + gap);
+    s += svgNode(x, startY, nw, nh, color, st.title, st.sub||'');
+    s += svgStepNum(x + 14, startY - 8, i + 1, color);
+    if (i < (flow.steps||[]).length - 1) s += svgArrow(x + nw + 4, startY + nh / 2, x + nw + gap - 4);
+  });
+  if (flow.summary) {
+    s += `<rect x="18" y="105" width="604" height="18" rx="9" fill="${hexToRgba(color, 0.12)}"/>`;
+    s += `<text x="320" y="118" text-anchor="middle" fill="${color}" font-size="11" font-weight="500" font-family="system-ui,sans-serif">${flow.summary}</text>`;
+  }
+  s += `</svg>`; return s;
+}
+const FLOWS_DEFAULT = [
+  { id:1, taskId:1, title:"房间分配", icon:"🏠", iconBg:"#3D5A80", owner:"商管部 · 截止 8月13日",
+    steps:[
+      {title:"统计人数",sub:"各商户出行人员"},{title:"收集证件",sub:"统计身份证号码"},
+      {title:"分配房间",sub:"按人数排房"},{title:"微信通知",sub:"推微信确认"}
+    ], summary:"商户出行人员 → 证件信息 → 房间分配表 → 微信群通知",
+    note:"需统计每家商户出行人员及身份证号码，分配后微信通知确认", alert:"", svg:"" },
+  { id:2, taskId:2, title:"餐食", icon:"🍽️", iconBg:"#4A7C5E", owner:"王艳 · 截止 8月13日",
+    steps:[], summary:"", note:"烧烤若需增加菜品，需提前2天联系民宿采购", alert:"",
+    svg: (()=>{const green="#4A7C5E",amber="#C8843C",W=640,H=180,nw=130,nh=56,gap=36,startX=18,startY=38;let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;["确认桌数","沟通民宿","确认菜单","加菜预警"].forEach((t,i)=>{const x=startX+i*(nw+gap),subs=["4桌·总人数","菜品·桌数","含烧烤方案","提前2天联系"];const fill=i===3?amber:green;s+=svgNode(x,startY,nw,nh,fill,t,subs[i]);s+=svgStepNum(x+14,startY-8,i+1,fill);if(i<3)s+=svgArrow(x+nw+4,startY+nh/2,x+nw+gap-4,i===2?amber:"#D0CCC4");});s+=`<rect x="${startX+3*(nw+gap)}" y="110" width="${nw}" height="52" rx="10" fill="#FBF0E0" stroke="${amber}" stroke-width="1.5" stroke-dasharray="4 3"/>`;s+=`<text x="${startX+3*(nw+gap)+nw/2}" y="132" text-anchor="middle" fill="${amber}" font-size="11" font-weight="600" font-family="system-ui,sans-serif">加菜预警</text>`;s+=`<text x="${startX+3*(nw+gap)+nw/2}" y="148" text-anchor="middle" fill="${amber}" font-size="10" font-family="system-ui,sans-serif">烧烤增加菜品</text>`;s+=`<text x="${startX+3*(nw+gap)+nw/2}" y="160" text-anchor="middle" fill="${amber}" font-size="10" font-family="system-ui,sans-serif">需提前2天联系</text></svg>`;return s;})() },
+  { id:3, taskId:3, title:"采买", icon:"🛒", iconBg:"#C8843C", owner:"王艳、刘欢 · 截止 8月13日",
+    steps:[], summary:"", note:"白酒10斤 / 啤酒燕京U8 6箱×24 / 可乐12瓶2L / 椰子水8瓶1L / 唯怡9瓶1.45L / 辣椒面50袋", alert:"",
+    svg: (()=>{const W=640,H=290,cats=[{title:"酒水",color:"#8E5E8C",items:["白酒 10斤","啤酒 燕京U8 6箱×24","可乐 12瓶(2L)","椰子水 8瓶(1L)","唯怡 9瓶(1.45L)"]},{title:"食材物料",color:"#C8843C",items:["辣椒面 50袋","烧烤料 适量","零食 适量","桌游 适量"]},{title:"横幅物料",color:"#3D5A80",items:["横幅 2幅","拍照道具 5-10个"]}];let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;const colW=192,gap=16,startX=12,startY=10;cats.forEach((cat,ci)=>{const cx=startX+ci*(colW+gap),ih=cat.items.length*26+50;s+=`<rect x="${cx}" y="${startY}" width="${colW}" height="${ih}" rx="10" fill="#FAF8F5" stroke="${cat.color}" stroke-width="1"/>`;s+=`<rect x="${cx}" y="${startY}" width="${colW}" height="34" rx="10" fill="${cat.color}"/>`;s+=`<rect x="${cx}" y="${startY+24}" width="${colW}" height="10" fill="${cat.color}"/>`;s+=`<text x="${cx+colW/2}" y="${startY+22}" text-anchor="middle" fill="#fff" font-size="13" font-weight="600" font-family="system-ui,sans-serif">${cat.title}</text>`;cat.items.forEach((item,ii)=>{const iy=startY+46+ii*26;s+=`<rect x="${cx+12}" y="${iy}" width="15" height="15" rx="4" fill="#fff" stroke="${cat.color}" stroke-width="1.2"/>`;s+=`<text x="${cx+36}" y="${iy+12}" fill="#3A3B45" font-size="11" font-family="system-ui,sans-serif">${item}</text>`;});});s+=`<rect x="12" y="${H-32}" width="${W-24}" height="24" rx="12" fill="#F8F1E2"/>`;s+=`<text x="${W/2}" y="${H-15}" text-anchor="middle" fill="#B8924A" font-size="11" font-weight="600" font-family="system-ui,sans-serif">共3类 11项 · 酒水5项 · 食材物料4项 · 横幅物料2项</text></svg>`;return s;})() },
+  { id:4, taskId:4, title:"拍照", icon:"📷", iconBg:"#7B6BA8", owner:"待定 · 需尽快确认",
+    steps:[{title:"前期策划",sub:"拍摄方案·镜头"},{title:"现场拍摄",sub:"活动·合影"},{title:"后期剪辑",sub:"视频剪辑"},{title:"视频宣发",sub:"公众号/视频号"}],
+    summary:"", note:"", alert:"负责人待定 — 距出行仅剩4天，请尽快安排",
+    svg: (()=>{const purple="#7B6BA8",red="#8B2635",W=640,H=160,nw=130,nh=56,gap=36,startX=18,startY=38;let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;["前期策划","现场拍摄","后期剪辑","视频宣发"].forEach((t,i)=>{const x=startX+i*(nw+gap),subs=["拍摄方案·镜头","活动·合影","视频剪辑","公众号/视频号"];s+=svgNode(x,startY,nw,nh,purple,t,subs[i]);s+=svgStepNum(x+14,startY-8,i+1,purple);if(i<3)s+=svgArrow(x+nw+4,startY+nh/2,x+nw+gap-4);});s+=`<rect x="18" y="108" width="604" height="40" rx="8" fill="#F9EBED" stroke="${red}" stroke-width="1"/>`;s+=`<circle cx="44" cy="128" r="9" fill="${red}"/><text x="44" y="132" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="system-ui,sans-serif">!</text>`;s+=`<text x="62" y="125" fill="${red}" font-size="12" font-weight="600" font-family="system-ui,sans-serif">负责人待定</text>`;s+=`<text x="62" y="140" fill="${red}" font-size="11" font-family="system-ui,sans-serif">距出行仅剩4天，请尽快安排拍摄负责人</text></svg>`;return s;})() },
+  { id:5, taskId:5, title:"横幅制作", icon:"🎨", iconBg:"#8B2635", owner:"刘欢 · 截止 8月13日",
+    steps:[
+      {title:"确认文案",sub:"横幅内容/口号"},{title:"对接策划",sub:"制作横幅+道具"},
+      {title:"验收物料",sub:"横幅2·道具5-10"},{title:"运输现场",sub:"出行当天携带"}
+    ], summary:"文案确认 → 制作对接 → 物料验收 → 当天携带",
+    note:"拍照人员需与横幅物料协调时间，横幅2幅+拍照道具5-10个", alert:"", svg:"" },
+  { id:6, taskId:6, title:"拉群", icon:"💬", iconBg:"#3D5A80", owner:"刘欢 · 截止 8月14日（出行前一天）",
+    steps:[
+      {title:"整理名单",sub:"出行商户名单"},{title:"拉群",sub:"出行前一天建群"},
+      {title:"编辑信息",sub:"时间/地点/注意"},{title:"发结束语",sub:"群内确认收尾"}
+    ], summary:"8月14日（出行前一天）执行 · 确保所有商户进群",
+    note:"出行前一天将所有出行商户拉群，编辑出行信息（时间/地点/注意事项）及结束语", alert:"", svg:"" },
+  { id:7, taskId:7, title:"座位安排", icon:"🪑", iconBg:"#4A7C5E", owner:"王艳、刘欢 · 4桌按商户分组",
+    steps:[], summary:"", note:"初步安排，出行当天根据实际上座情况可微调", alert:"",
+    svg: (()=>{const W=640,H=280,tables=[{n:1,color:"#3D5A80",merchants:["神电新能源","向洋","林友豪","英格玛","悦友"]},{n:2,color:"#4A7C5E",merchants:["尚锦","裕丰","南天","劲越"]},{n:3,color:"#7B6BA8",merchants:["捷电","佳驹","弘海达","无限酷车"]},{n:4,color:"#8B2635",merchants:["宜车","老猪皮卡","卡尔曼","裕鸿至"]}];let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;const tw=296,th=118,gapX=24,gapY=14,startX=12,startY=10;tables.forEach((tbl,ti)=>{const col=ti%2,row=Math.floor(ti/2),tx=startX+col*(tw+gapX),ty=startY+row*(th+gapY);s+=`<rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="10" fill="#FAF8F5" stroke="${tbl.color}" stroke-width="1"/>`;s+=`<rect x="${tx}" y="${ty}" width="${tw}" height="30" rx="10" fill="${tbl.color}"/>`;s+=`<rect x="${tx}" y="${ty+20}" width="${tw}" height="10" fill="${tbl.color}"/>`;s+=`<text x="${tx+16}" y="${ty+20}" fill="#fff" font-size="13" font-weight="600" font-family="system-ui,sans-serif">第${tbl.n}桌</text>`;s+=`<text x="${tx+tw-16}" y="${ty+20}" text-anchor="end" fill="rgba(255,255,255,.7)" font-size="11" font-family="system-ui,sans-serif">${tbl.merchants.length}家商户</text>`;tbl.merchants.forEach((m,mi)=>{const my=ty+48+mi*16;s+=`<circle cx="${tx+20}" cy="${my-4}" r="3" fill="${tbl.color}"/>`;s+=`<text x="${tx+30}" y="${my}" fill="#3A3B45" font-size="11" font-family="system-ui,sans-serif">${m}</text>`;});});s+=`<rect x="12" y="${H-26}" width="${W-24}" height="18" rx="9" fill="#EAF3EC"/>`;s+=`<text x="${W/2}" y="${H-13}" text-anchor="middle" fill="#4A7C5E" font-size="11" font-weight="500" font-family="system-ui,sans-serif">初步安排，出行当天根据实际上座情况可微调</text></svg>`;return s;})() }
+];
+let flowsData = JSON.parse(JSON.stringify(FLOWS_DEFAULT));
+let flowsNextId = 8;
+
+function applyFlowsData(fd) {
+  if (fd && Array.isArray(fd) && fd.length) {
+    flowsData = fd.map(f => ({
+      id: f.id, taskId: f.taskId||0, title: f.title||'', icon: f.icon||'📋', iconBg: f.iconBg||'#3D5A80',
+      owner: f.owner||'', steps: f.steps||[], summary: f.summary||'', note: f.note||'', alert: f.alert||'', svg: f.svg||''
+    }));
+    flowsNextId = Math.max(...flowsData.map(f => f.id), 0) + 1;
+  }
+}
 
 function applyRoomsData(rd) {
   if (rd && Array.isArray(rd) && rd.length) {
@@ -1714,145 +1929,180 @@ function svgStepNum(cx, cy, n, fill) {
 }
 
 function renderFlow() {
-  const flows = [
-    { title:"房间分配", icon:"🏠", iconBg:"#3D5A80", owner:"商管部 · 截止 8月13日", badge:"todo", badgeText:"待办",
-      svg: (() => {
-        const blue="#3D5A80"; const steps=["统计人数","收集证件","分配房间","微信通知"];
-        const subs=["各商户出行人员","统计身份证号码","按人数排房","推微信确认"];
-        const W=640,H=130,nw=130,nh=56,gap=36,startX=18,startY=38;
-        let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-        steps.forEach((t,i)=>{
-          const x=startX+i*(nw+gap);
-          s+=svgNode(x,startY,nw,nh,blue,t,subs[i]);
-          s+=svgStepNum(x+14,startY-8,i+1,blue);
-          if(i<3) s+=svgArrow(x+nw+4,startY+nh/2,x+nw+gap-4);
-        });
-        s+=`<rect x="18" y="105" width="604" height="18" rx="9" fill="#EAF0FA"/>`;
-        s+=`<text x="320" y="118" text-anchor="middle" fill="${blue}" font-size="11" font-weight="500" font-family="system-ui,sans-serif">商户出行人员 → 证件信息 → 房间分配表 → 微信群通知</text></svg>`; return s;
-      })(), note:"需统计每家商户出行人员及身份证号码，分配后微信通知确认" },
-    { title:"餐食", icon:"🍽️", iconBg:"#4A7C5E", owner:"王艳 · 截止 8月13日", badge:"todo", badgeText:"待办",
-      svg: (() => {
-        const green="#4A7C5E",amber="#C8843C",W=640,H=180,nw=130,nh=56,gap=36,startX=18,startY=38;
-        let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-        ["确认桌数","沟通民宿","确认菜单","加菜预警"].forEach((t,i)=>{
-          const x=startX+i*(nw+gap),subs=["4桌·总人数","菜品·桌数","含烧烤方案","提前2天联系"];
-          const fill=i===3?amber:green;
-          s+=svgNode(x,startY,nw,nh,fill,t,subs[i]);
-          s+=svgStepNum(x+14,startY-8,i+1,fill);
-          if(i<3) s+=svgArrow(x+nw+4,startY+nh/2,x+nw+gap-4,i===2?amber:"#D0CCC4");
-        });
-        s+=`<rect x="${startX+3*(nw+gap)}" y="110" width="${nw}" height="52" rx="10" fill="#FBF0E0" stroke="${amber}" stroke-width="1.5" stroke-dasharray="4 3"/>`;
-        s+=`<text x="${startX+3*(nw+gap)+nw/2}" y="132" text-anchor="middle" fill="${amber}" font-size="11" font-weight="600" font-family="system-ui,sans-serif">加菜预警</text>`;
-        s+=`<text x="${startX+3*(nw+gap)+nw/2}" y="148" text-anchor="middle" fill="${amber}" font-size="10" font-family="system-ui,sans-serif">烧烤增加菜品</text>`;
-        s+=`<text x="${startX+3*(nw+gap)+nw/2}" y="160" text-anchor="middle" fill="${amber}" font-size="10" font-family="system-ui,sans-serif">需提前2天联系</text>`;
-        s+=`</svg>`; return s;
-      })(), note:"烧烤若需增加菜品，需提前2天联系民宿采购" },
-    { title:"采买", icon:"🛒", iconBg:"#C8843C", owner:"王艳、刘欢 · 截止 8月13日", badge:"todo", badgeText:"待办",
-      svg: (() => {
-        const W=640,H=290,cats=[
-          {title:"酒水", color:"#8E5E8C", items:["白酒 10斤","啤酒 燕京U8 6箱×24","可乐 12瓶(2L)","椰子水 8瓶(1L)","唯怡 9瓶(1.45L)"]},
-          {title:"食材物料", color:"#C8843C", items:["辣椒面 50袋","烧烤料 适量","零食 适量","桌游 适量"]},
-          {title:"横幅物料", color:"#3D5A80", items:["横幅 2幅","拍照道具 5-10个"]}];
-        let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-        const colW=192,gap=16,startX=12,startY=10;
-        cats.forEach((cat,ci)=>{
-          const cx=startX+ci*(colW+gap),ih=cat.items.length*26+50;
-          s+=`<rect x="${cx}" y="${startY}" width="${colW}" height="${ih}" rx="10" fill="#FAF8F5" stroke="${cat.color}" stroke-width="1"/>`;
-          s+=`<rect x="${cx}" y="${startY}" width="${colW}" height="34" rx="10" fill="${cat.color}"/>`;
-          s+=`<rect x="${cx}" y="${startY+24}" width="${colW}" height="10" fill="${cat.color}"/>`;
-          s+=`<text x="${cx+colW/2}" y="${startY+22}" text-anchor="middle" fill="#fff" font-size="13" font-weight="600" font-family="system-ui,sans-serif">${cat.title}</text>`;
-          cat.items.forEach((item,ii)=>{
-            const iy=startY+46+ii*26;
-            s+=`<rect x="${cx+12}" y="${iy}" width="15" height="15" rx="4" fill="#fff" stroke="${cat.color}" stroke-width="1.2"/>`;
-            s+=`<text x="${cx+36}" y="${iy+12}" fill="#3A3B45" font-size="11" font-family="system-ui,sans-serif">${item}</text>`;
-          });
-        });
-        s+=`<rect x="12" y="${H-32}" width="${W-24}" height="24" rx="12" fill="#F8F1E2"/>`;
-        s+=`<text x="${W/2}" y="${H-15}" text-anchor="middle" fill="#B8924A" font-size="11" font-weight="600" font-family="system-ui,sans-serif">共3类 11项 · 酒水5项 · 食材物料4项 · 横幅物料2项</text></svg>`; return s;
-      })(), note:"白酒10斤 / 啤酒燕京U8 6箱×24 / 可乐12瓶2L / 椰子水8瓶1L / 唯怡9瓶1.45L / 辣椒面50袋" },
-    { title:"拍照", icon:"📷", iconBg:"#7B6BA8", owner:"待定 · 需尽快确认", badge:"alert", badgeText:"负责人待定",
-      svg: (() => {
-        const purple="#7B6BA8",red="#8B2635",W=640,H=160,nw=130,nh=56,gap=36,startX=18,startY=38;
-        let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-        ["前期策划","现场拍摄","后期剪辑","视频宣发"].forEach((t,i)=>{
-          const x=startX+i*(nw+gap),subs=["拍摄方案·镜头","活动·合影","视频剪辑","公众号/视频号"];
-          s+=svgNode(x,startY,nw,nh,purple,t,subs[i]);
-          s+=svgStepNum(x+14,startY-8,i+1,purple);
-          if(i<3) s+=svgArrow(x+nw+4,startY+nh/2,x+nw+gap-4);
-        });
-        s+=`<rect x="18" y="108" width="604" height="40" rx="8" fill="#F9EBED" stroke="${red}" stroke-width="1"/>`;
-        s+=`<circle cx="44" cy="128" r="9" fill="${red}"/><text x="44" y="132" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="system-ui,sans-serif">!</text>`;
-        s+=`<text x="62" y="125" fill="${red}" font-size="12" font-weight="600" font-family="system-ui,sans-serif">负责人待定</text>`;
-        s+=`<text x="62" y="140" fill="${red}" font-size="11" font-family="system-ui,sans-serif">距出行仅剩4天，请尽快安排拍摄负责人</text></svg>`; return s;
-      })(), alert:"负责人待定 — 距出行仅剩4天，请尽快安排" },
-    { title:"横幅制作", icon:"🎨", iconBg:"#8B2635", owner:"刘欢 · 截止 8月13日", badge:"todo", badgeText:"待办",
-      svg: (() => {
-        const coral="#8B2635",W=640,H=130,nw=130,nh=56,gap=36,startX=18,startY=38;
-        let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-        ["确认文案","对接策划","验收物料","运输现场"].forEach((t,i)=>{
-          const x=startX+i*(nw+gap),subs=["横幅内容/口号","制作横幅+道具","横幅2·道具5-10","出行当天携带"];
-          s+=svgNode(x,startY,nw,nh,coral,t,subs[i]);
-          s+=svgStepNum(x+14,startY-8,i+1,coral);
-          if(i<3) s+=svgArrow(x+nw+4,startY+nh/2,x+nw+gap-4);
-        });
-        s+=`<rect x="18" y="105" width="604" height="18" rx="9" fill="#F9EBED"/>`;
-        s+=`<text x="320" y="118" text-anchor="middle" fill="${coral}" font-size="11" font-weight="500" font-family="system-ui,sans-serif">文案确认 → 制作对接 → 物料验收 → 当天携带</text></svg>`; return s;
-      })(), note:"拍照人员需与横幅物料协调时间，横幅2幅+拍照道具5-10个" },
-    { title:"拉群", icon:"💬", iconBg:"#3D5A80", owner:"刘欢 · 截止 8月14日（出行前一天）", badge:"todo", badgeText:"待办",
-      svg: (() => {
-        const blue="#3D5A80",W=640,H=130,nw=130,nh=56,gap=36,startX=18,startY=38;
-        let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-        ["整理名单","拉群","编辑信息","发结束语"].forEach((t,i)=>{
-          const x=startX+i*(nw+gap),subs=["出行商户名单","出行前一天建群","时间/地点/注意","群内确认收尾"];
-          s+=svgNode(x,startY,nw,nh,blue,t,subs[i]);
-          s+=svgStepNum(x+14,startY-8,i+1,blue);
-          if(i<3) s+=svgArrow(x+nw+4,startY+nh/2,x+nw+gap-4);
-        });
-        s+=`<rect x="18" y="105" width="604" height="18" rx="9" fill="#EAF0FA"/>`;
-        s+=`<text x="320" y="118" text-anchor="middle" fill="${blue}" font-size="11" font-weight="500" font-family="system-ui,sans-serif">8月14日（出行前一天）执行 · 确保所有商户进群</text></svg>`; return s;
-      })(), note:"出行前一天将所有出行商户拉群，编辑出行信息（时间/地点/注意事项）及结束语" },
-    { title:"座位安排", icon:"🪑", iconBg:"#4A7C5E", owner:"王艳、刘欢 · 4桌按商户分组", badge:"todo", badgeText:"待办",
-      svg: (() => {
-        const W=640,H=280,tables=[
-          {n:1,color:"#3D5A80",merchants:["神电新能源","向洋","林友豪","英格玛","悦友"]},
-          {n:2,color:"#4A7C5E",merchants:["尚锦","裕丰","南天","劲越"]},
-          {n:3,color:"#7B6BA8",merchants:["捷电","佳驹","弘海达","无限酷车"]},
-          {n:4,color:"#8B2635",merchants:["宜车","老猪皮卡","卡尔曼","裕鸿至"]}];
-        let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-        const tw=296,th=118,gapX=24,gapY=14,startX=12,startY=10;
-        tables.forEach((tbl,ti)=>{
-          const col=ti%2,row=Math.floor(ti/2),tx=startX+col*(tw+gapX),ty=startY+row*(th+gapY);
-          s+=`<rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="10" fill="#FAF8F5" stroke="${tbl.color}" stroke-width="1"/>`;
-          s+=`<rect x="${tx}" y="${ty}" width="${tw}" height="30" rx="10" fill="${tbl.color}"/>`;
-          s+=`<rect x="${tx}" y="${ty+20}" width="${tw}" height="10" fill="${tbl.color}"/>`;
-          s+=`<text x="${tx+16}" y="${ty+20}" fill="#fff" font-size="13" font-weight="600" font-family="system-ui,sans-serif">第${tbl.n}桌</text>`;
-          s+=`<text x="${tx+tw-16}" y="${ty+20}" text-anchor="end" fill="rgba(255,255,255,.7)" font-size="11" font-family="system-ui,sans-serif">${tbl.merchants.length}家商户</text>`;
-          tbl.merchants.forEach((m,mi)=>{ const my=ty+48+mi*16; s+=`<circle cx="${tx+20}" cy="${my-4}" r="3" fill="${tbl.color}"/>`; s+=`<text x="${tx+30}" y="${my}" fill="#3A3B45" font-size="11" font-family="system-ui,sans-serif">${m}</text>`; });
-        });
-        s+=`<rect x="12" y="${H-26}" width="${W-24}" height="18" rx="9" fill="#EAF3EC"/>`;
-        s+=`<text x="${W/2}" y="${H-13}" text-anchor="middle" fill="#4A7C5E" font-size="11" font-weight="500" font-family="system-ui,sans-serif">初步安排，出行当天根据实际上座情况可微调</text></svg>`; return s;
-      })(), note:"初步安排，出行当天根据实际上座情况可微调" }
-  ];
-  document.getElementById('flowList').innerHTML = flows.map(f => `
-    <div class="flow-card">
-      <div class="flow-head"><div><div class="ft"><span class="f-icon" style="background:${f.iconBg}">${f.icon}</span>${f.title}</div><div class="fo">${f.owner}</div></div><span class="badge badge-${f.badge}">${f.badgeText}</span></div>
-      <div class="flow-svg-wrap">${f.svg}</div>
-      ${f.alert ? `<div class="flow-alert-bar"><span class="pulse-dot" style="width:7px;height:7px;border-radius:50%;background:var(--wine);animation:dotPulse 1.5s infinite;"></span>${f.alert}</div>` : ''}
-      ${f.note ? `<div class="flow-note-bar">${f.note}</div>` : ''}</div>`).join('');
+  document.getElementById('flowList').innerHTML = flowsData.map((f, fi) => {
+    const svg = genFlowSvg(f);
+    const st = (taskStatuses[f.taskId] || 'todo');
+    const badgeMap = { done: ['badge-ok','已完成'], doing: ['badge-doing','进行中'], todo: ['badge-todo','待办'] };
+    const [badgeCls, badgeText] = badgeMap[st] || badgeMap.todo;
+    return `<div class="flow-card">
+      <div class="flow-head">
+        <div><div class="ft"><span class="f-icon" style="background:${f.iconBg}">${f.icon}</span>${f.title}</div><div class="fo">${f.owner}</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${fi > 0 ? `<button class="btn btn-sm flow-mv" data-act="up" data-idx="${fi}" title="上移">↑</button>` : ''}
+          ${fi < flowsData.length-1 ? `<button class="btn btn-sm flow-mv" data-act="down" data-idx="${fi}" title="下移">↓</button>` : ''}
+          <button class="btn btn-sm flow-edit" data-idx="${fi}" title="编辑">✏️</button>
+          <button class="btn btn-sm flow-del" data-idx="${fi}" title="删除">✕</button>
+          <span class="badge ${badgeCls}">${badgeText}</span>
+        </div>
+      </div>
+      <div class="flow-svg-wrap">${svg}</div>
+      ${f.alert && st !== 'done' ? `<div class="flow-alert-bar"><span class="pulse-dot" style="width:7px;height:7px;border-radius:50%;background:var(--wine);animation:dotPulse 1.5s infinite;"></span>${f.alert}</div>` : ''}
+      ${f.note ? `<div class="flow-note-bar">${f.note}</div>` : ''}</div>`;
+  }).join('');
+  document.querySelectorAll('.flow-mv').forEach(btn => {
+    btn.onclick = function() {
+      const idx = parseInt(this.dataset.idx), act = this.dataset.act;
+      if (act === 'up' && idx > 0) { [flowsData[idx-1], flowsData[idx]] = [flowsData[idx], flowsData[idx-1]]; markDirty('flow'); renderFlow(); }
+      else if (act === 'down' && idx < flowsData.length-1) { [flowsData[idx], flowsData[idx+1]] = [flowsData[idx+1], flowsData[idx]]; markDirty('flow'); renderFlow(); }
+    };
+  });
+  document.querySelectorAll('.flow-edit').forEach(btn => {
+    btn.onclick = function() { editFlow(parseInt(this.dataset.idx)); };
+  });
+  document.querySelectorAll('.flow-del').forEach(btn => {
+    btn.onclick = function() {
+      if (!confirm('确定删除此流程卡片？')) return;
+      flowsData.splice(parseInt(this.dataset.idx), 1);
+      markDirty('flow'); renderFlow(); showToast('流程已删除');
+    };
+  });
 }
+
+function editFlow(idx) {
+  const f = flowsData[idx];
+  const hasCustomSvg = !!f.svg;
+  const stepsHtml = (f.steps||[]).map((st, si) => `
+    <div class="flow-step-row">
+      <span class="fstep-num">${si+1}</span>
+      <input class="fstep-title" value="${escHtml(st.title||'')}" placeholder="步骤名称">
+      <input class="fstep-sub" value="${escHtml(st.sub||'')}" placeholder="副标题">
+      <button class="btn btn-sm fstep-mv" data-act="up" data-si="${si}">↑</button>
+      <button class="btn btn-sm fstep-mv" data-act="down" data-si="${si}">↓</button>
+      <button class="btn btn-sm fstep-del" data-si="${si}">✕</button>
+    </div>`).join('');
+  const html = `
+    <div class="modal-section"><label>流程标题</label><input id="efTitle" value="${escHtml(f.title)}"></div>
+    <div class="field-row">
+      <div class="field"><label>图标 (emoji)</label><input id="efIcon" value="${escHtml(f.icon)}" maxlength="4"></div>
+      <div class="field"><label>主题色</label><input id="efIconBg" type="color" value="${f.iconBg}" style="width:60px;height:32px;padding:2px;"></div>
+      <div class="field"><label>关联任务ID</label><input id="efTaskId" type="number" value="${f.taskId||''}" min="1" style="width:70px;"></div>
+    </div>
+    <div class="modal-section"><label>负责人/备注</label><input id="efOwner" value="${escHtml(f.owner)}"></div>
+    <div class="modal-section"><label>底部备注 (note)</label><input id="efNote" value="${escHtml(f.note||'')}"></div>
+    <div class="modal-section"><label>警告条 (alert)</label><input id="efAlert" value="${escHtml(f.alert||'')}" placeholder="留空则不显示"></div>
+    <div class="modal-section" style="margin-top:16px;">
+      <label style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📋 流程步骤 ${hasCustomSvg ? '(自定义SVG，步骤不生效)' : ''}</span>
+        <button class="btn btn-sm btn-gold" id="efAddStep">➕ 添加步骤</button>
+      </label>
+      <div id="efStepsList" style="margin-top:8px;">${stepsHtml}</div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-sm" id="efCancel">取消</button><button class="btn btn-primary btn-sm" id="efSave">保存</button></div>`;
+  document.getElementById('hikeModalContent').innerHTML = html;
+  document.getElementById('hikeModal').classList.add('show');
+
+  document.getElementById('efCancel').onclick = () => document.getElementById('hikeModal').classList.remove('show');
+  document.getElementById('efSave').onclick = () => {
+    f.title = document.getElementById('efTitle').value.trim() || f.title;
+    f.icon = document.getElementById('efIcon').value.trim() || '📋';
+    f.iconBg = document.getElementById('efIconBg').value || f.iconBg;
+    f.taskId = parseInt(document.getElementById('efTaskId').value) || 0;
+    f.owner = document.getElementById('efOwner').value.trim();
+    f.note = document.getElementById('efNote').value.trim();
+    f.alert = document.getElementById('efAlert').value.trim();
+    const rows = document.querySelectorAll('#efStepsList .flow-step-row');
+    if (rows.length) {
+      const newSteps = [];
+      rows.forEach(row => {
+        const t = row.querySelector('.fstep-title').value.trim();
+        const s = row.querySelector('.fstep-sub').value.trim();
+        if (t) newSteps.push({ title: t, sub: s });
+      });
+      if (newSteps.length > 0) { f.steps = newSteps; f.svg = ''; }
+    }
+    markDirty('flow'); renderFlow(); document.getElementById('hikeModal').classList.remove('show'); showToast('流程已更新');
+  };
+
+  function rebindSteps() {
+    document.querySelectorAll('#efStepsList .fstep-mv').forEach(btn => {
+      btn.onclick = function() {
+        const si = parseInt(this.dataset.si), act = this.dataset.act;
+        const steps = f.steps; if (!steps) return;
+        if (act === 'up' && si > 0) { [steps[si-1], steps[si]] = [steps[si], steps[si-1]]; }
+        else if (act === 'down' && si < steps.length-1) { [steps[si], steps[si+1]] = [steps[si+1], steps[si]]; }
+        const container = document.getElementById('efStepsList');
+        container.innerHTML = f.steps.map((st, si2) => `
+          <div class="flow-step-row">
+            <span class="fstep-num">${si2+1}</span>
+            <input class="fstep-title" value="${escHtml(st.title||'')}" placeholder="步骤名称">
+            <input class="fstep-sub" value="${escHtml(st.sub||'')}" placeholder="副标题">
+            <button class="btn btn-sm fstep-mv" data-act="up" data-si="${si2}">↑</button>
+            <button class="btn btn-sm fstep-mv" data-act="down" data-si="${si2}">↓</button>
+            <button class="btn btn-sm fstep-del" data-si="${si2}">✕</button>
+          </div>`).join('');
+        rebindSteps();
+      };
+    });
+    document.querySelectorAll('#efStepsList .fstep-del').forEach(btn => {
+      btn.onclick = function() {
+        const si = parseInt(this.dataset.si);
+        f.steps.splice(si, 1);
+        const container = document.getElementById('efStepsList');
+        container.innerHTML = f.steps.map((st, si2) => `
+          <div class="flow-step-row">
+            <span class="fstep-num">${si2+1}</span>
+            <input class="fstep-title" value="${escHtml(st.title||'')}" placeholder="步骤名称">
+            <input class="fstep-sub" value="${escHtml(st.sub||'')}" placeholder="副标题">
+            <button class="btn btn-sm fstep-mv" data-act="up" data-si="${si2}">↑</button>
+            <button class="btn btn-sm fstep-mv" data-act="down" data-si="${si2}">↓</button>
+            <button class="btn btn-sm fstep-del" data-si="${si2}">✕</button>
+          </div>`).join('');
+        rebindSteps();
+      };
+    });
+  }
+  rebindSteps();
+
+  document.getElementById('efAddStep').onclick = () => {
+    if (!f.steps) f.steps = [];
+    f.steps.push({ title: '', sub: '' });
+    const container = document.getElementById('efStepsList');
+    container.innerHTML = f.steps.map((st, si2) => `
+      <div class="flow-step-row">
+        <span class="fstep-num">${si2+1}</span>
+        <input class="fstep-title" value="${escHtml(st.title||'')}" placeholder="步骤名称">
+        <input class="fstep-sub" value="${escHtml(st.sub||'')}" placeholder="副标题">
+        <button class="btn btn-sm fstep-mv" data-act="up" data-si="${si2}">↑</button>
+        <button class="btn btn-sm fstep-mv" data-act="down" data-si="${si2}">↓</button>
+        <button class="btn btn-sm fstep-del" data-si="${si2}">✕</button>
+      </div>`).join('');
+    rebindSteps();
+  };
+}
+
+document.getElementById('flowAddBtn').addEventListener('click', () => {
+  const newFlow = { id: flowsNextId++, taskId: 0, title: '新流程', icon: '📋', iconBg: '#3D5A80', owner: '',
+    steps: [{ title: '步骤1', sub: '副标题' }, { title: '步骤2', sub: '副标题' }], summary: '', note: '', alert: '', svg: '' };
+  flowsData.push(newFlow);
+  markDirty('flow'); renderFlow();
+  setTimeout(() => editFlow(flowsData.length - 1), 100);
+  showToast('新流程已添加，请编辑');
+});
+document.getElementById('flowResetBtn').addEventListener('click', () => {
+  if (confirm('重置为默认流程图？')) { flowsData = JSON.parse(JSON.stringify(FLOWS_DEFAULT)); flowsNextId = 8; markDirty('flow'); renderFlow(); showToast('已重置默认'); }
+});
 
 // ================================================================
 // 10. Save All & Init
 // ================================================================
 async function saveAll() {
-  if (!_dirtyTasks && !_dirtyProc && !_dirtyBbq && !_dirtyHike && !_dirtyLunch && !_dirtyTimeline && !_dirtyFlow && !_dirtyRooms) {
+  if (!_dirtyTasks && !_dirtyProc && !_dirtySeating && !_dirtyHike && !_dirtyTimeline && !_dirtyFlow && !_dirtyRooms) {
     showToast('✅ 没有需要保存的修改'); return;
   }
   const store = await loadStore();
   store.taskStatuses = taskStatuses; store.tasks = tasksData;
-  store.proc = procData; store.bbq = bbqData;
-  store.hike = hikeData; store.lunch = lunchData;
-  store.rooms = roomsData;
+  store.proc = procData; store.seating = seatingData;
+  store.hike = hikeData; store.rooms = roomsData; store.flows = flowsData;
   _dataCache = store;
   return flushStore(); // save all sections
 }
@@ -1860,7 +2110,7 @@ async function saveAll() {
 document.getElementById('saveAllBtn').addEventListener('click', saveAll);
 
 function renderAll() {
-  renderTasks(); renderProc(); renderRooms(); renderBbq(); renderLunch(); renderHike(); renderTimelinePanel(); renderFlow();
+  renderTasks(); renderProc(); renderRooms(); renderSeating(); renderHike(); renderTimelinePanel(); renderFlow();
 }
 
 async function initApp() {
@@ -1869,10 +2119,22 @@ async function initApp() {
     if (store.taskStatuses) applyTaskStatuses(store.taskStatuses);
     if (store.tasks) applyTasksData(store.tasks);
     if (store.proc) applyProcData(store.proc);
-    if (store.bbq) applyBbqData(store.bbq);
+    if (store.seating) { applySeatingData(store.seating); }
+    else if (store.bbq || store.lunch) {
+      // Backward compat: migrate old bbq/lunch data to new seating format
+      const tables = [];
+      if (store.bbq && Array.isArray(store.bbq)) store.bbq.forEach(t => {
+        tables.push({ id: t.id, type: 'rect', config: t.config || DEFAULT_BBQ_CFG, owner: t.owner||'', seats: t.seats||[] });
+      });
+      if (store.lunch && Array.isArray(store.lunch)) store.lunch.forEach(t => {
+        tables.push({ id: t.id + 100, type: 'round', owner: '', seats: t.seats||[] });
+      });
+      seatingData = [{ id: 1, name: '默认方案', tables }];
+      seatingPlanNextId = 2; seatingTableNextId = Math.max(...tables.map(t=>t.id), 0) + 1;
+    }
     if (store.hike) applyHikeData(store.hike);
-    if (store.lunch) applyLunchData(store.lunch);
     if (store.rooms) applyRoomsData(store.rooms);
+    if (store.flows) applyFlowsData(store.flows);
   }
   renderAll();
   showToast('📋 已从云端加载数据');
