@@ -94,9 +94,9 @@
       },
       "vehicles": [
         {
-          "name": "默认车行",
-          "adults": "7",
-          "children": "2"
+          "name": "车行",
+          "adults": "",
+          "children": ""
         }
       ],
       "waypoints": [
@@ -128,7 +128,7 @@
       },
       "vehicles": [
         {
-          "name": "新车行",
+          "name": "车行",
           "adults": "",
           "children": ""
         }
@@ -162,7 +162,7 @@
       },
       "vehicles": [
         {
-          "name": "新车行",
+          "name": "车行",
           "adults": "",
           "children": ""
         }
