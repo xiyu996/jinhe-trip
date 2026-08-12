@@ -248,5 +248,711 @@
         ""
       ]
     }
+  ],
+  "taskStatuses": {
+    "1": "todo",
+    "2": "todo",
+    "3": "todo",
+    "4": "todo",
+    "5": "todo",
+    "6": "todo",
+    "7": "todo"
+  },
+  "tasks": [
+    {
+      "id": 1,
+      "title": "房间分配",
+      "owner": "商管部",
+      "detail": "根据每家出行人员分配房间，统计身份证号码，推微信。",
+      "deadline": "2026-08-13"
+    },
+    {
+      "id": 2,
+      "title": "餐食",
+      "owner": "王艳",
+      "detail": "提前与民宿沟通菜品、桌数（烧烤若需增加菜品需提前2天联系民宿采购）。",
+      "deadline": "2026-08-13"
+    },
+    {
+      "id": 3,
+      "title": "采买",
+      "owner": "王艳、刘欢",
+      "detail": "采购活动所需的酒水及零食（如：白酒、啤酒、饮料、烧烤料、零食、桌游等）。",
+      "deadline": "2026-08-13"
+    },
+    {
+      "id": 4,
+      "title": "拍照",
+      "owner": "待定",
+      "detail": "负责本次活动的摄影及后期视频宣发。",
+      "deadline": ""
+    },
+    {
+      "id": 5,
+      "title": "横幅制作",
+      "owner": "刘欢",
+      "detail": "对接策划制作本次活动拍照所需的横幅及物料。横幅2幅，拍照道具5-10个。",
+      "deadline": "2026-08-13"
+    },
+    {
+      "id": 6,
+      "title": "拉群",
+      "owner": "刘欢",
+      "detail": "出行前一天将出行商户拉群，编辑出行信息及结束语。",
+      "deadline": "2026-08-14"
+    },
+    {
+      "id": 7,
+      "title": "座位安排",
+      "owner": "王艳、刘欢",
+      "detail": "初步安排4桌座位分配，具体见座位安排面板。",
+      "deadline": ""
+    }
+  ],
+  "proc": [
+    {
+      "category": "酒水",
+      "icon": "🍷",
+      "iconBg": "#8E5E8C",
+      "items": [
+        {
+          "name": "白酒",
+          "qty": "10斤",
+          "checked": false
+        },
+        {
+          "name": "啤酒 燕京U8",
+          "qty": "6箱×24罐",
+          "checked": false
+        },
+        {
+          "name": "可乐",
+          "qty": "12瓶（2L装）",
+          "checked": false
+        },
+        {
+          "name": "椰子水",
+          "qty": "8瓶（1L装）",
+          "checked": false
+        },
+        {
+          "name": "唯怡",
+          "qty": "9瓶（1.45L装）",
+          "checked": false
+        }
+      ]
+    },
+    {
+      "category": "食材物料",
+      "icon": "🥘",
+      "iconBg": "#C8843C",
+      "items": [
+        {
+          "name": "辣椒面",
+          "qty": "50袋",
+          "checked": false
+        },
+        {
+          "name": "烧烤料",
+          "qty": "适量",
+          "checked": false
+        },
+        {
+          "name": "零食",
+          "qty": "适量",
+          "checked": false
+        },
+        {
+          "name": "桌游",
+          "qty": "适量",
+          "checked": false
+        }
+      ]
+    },
+    {
+      "category": "横幅物料",
+      "icon": "📜",
+      "iconBg": "#3D5A80",
+      "items": [
+        {
+          "name": "横幅",
+          "qty": "2幅",
+          "checked": false
+        },
+        {
+          "name": "拍照道具",
+          "qty": "5-10个",
+          "checked": false
+        }
+      ]
+    }
+  ],
+  "seating": [
+    {
+      "id": 1,
+      "name": "默认方案",
+      "tables": [
+        {
+          "id": 1,
+          "type": "rect",
+          "config": {
+            "top": 14,
+            "bottom": 14,
+            "left": 1,
+            "right": 1
+          },
+          "owner": "",
+          "seats": [
+            "",
+            "",
+            "",
+            "劲越",
+            "英格玛",
+            "神电1",
+            "邓总",
+            "捷电",
+            "吴总",
+            "向洋",
+            "佳驹",
+            "裕鸿至",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "李梦羚",
+            "",
+            "卡尔曼",
+            "邱总",
+            "林友豪",
+            "悦友",
+            "付总",
+            "尚锦",
+            "宜车",
+            "王艳",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "id": 2,
+          "type": "rect",
+          "config": {
+            "top": 14,
+            "bottom": 14,
+            "left": 1,
+            "right": 1
+          },
+          "owner": "",
+          "seats": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "老猪皮卡",
+            "",
+            "",
+            "",
+            "无限酷车",
+            "",
+            "",
+            "",
+            "",
+            "刘欢",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "裕丰",
+            "",
+            "",
+            "",
+            "新华瓴",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "id": 101,
+          "type": "round",
+          "owner": "",
+          "seats": [
+            "小邓总",
+            "吴总",
+            "林友豪",
+            "",
+            "神电",
+            "向洋",
+            "裕鸿至",
+            "悦友",
+            "英格玛",
+            "弘海达"
+          ]
+        },
+        {
+          "id": 102,
+          "type": "round",
+          "owner": "",
+          "seats": [
+            "邱林海",
+            "",
+            "新华瓴",
+            "",
+            "裕丰",
+            "",
+            "尚锦",
+            "",
+            "劲越",
+            ""
+          ]
+        },
+        {
+          "id": 103,
+          "type": "round",
+          "owner": "",
+          "seats": [
+            "捷电",
+            "",
+            "佳驹",
+            "",
+            "付代田",
+            "",
+            "无限酷车",
+            "",
+            "卡尔曼",
+            ""
+          ]
+        },
+        {
+          "id": 104,
+          "type": "round",
+          "owner": "",
+          "seats": [
+            "宜车",
+            "",
+            "李梦羚",
+            "王艳",
+            "刘欢",
+            "",
+            "卡尔曼",
+            "",
+            "老猪皮卡",
+            ""
+          ]
+        }
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "id": 1,
+      "name": "101",
+      "floor": "1楼",
+      "roomType": "标间",
+      "vehicle": "神电新能源",
+      "adults": 2,
+      "children": 0
+    },
+    {
+      "id": 2,
+      "name": "103",
+      "floor": "1楼",
+      "roomType": "标间",
+      "vehicle": "宜车品质车行",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 3,
+      "name": "105",
+      "floor": "1楼",
+      "roomType": "标间",
+      "vehicle": "捷电新能源",
+      "adults": 2,
+      "children": 0
+    },
+    {
+      "id": 4,
+      "name": "106",
+      "floor": "1楼",
+      "roomType": "标间",
+      "vehicle": "向洋车行",
+      "adults": 2,
+      "children": 0
+    },
+    {
+      "id": 5,
+      "name": "108",
+      "floor": "1楼",
+      "roomType": "标间",
+      "vehicle": "林友豪品质名车",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 6,
+      "name": "109",
+      "floor": "1楼",
+      "roomType": "标间",
+      "vehicle": "佳驹名车",
+      "adults": 2,
+      "children": 2
+    },
+    {
+      "id": 7,
+      "name": "110",
+      "floor": "1楼",
+      "roomType": "标间",
+      "vehicle": "弘海达",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 8,
+      "name": "220",
+      "floor": "2楼",
+      "roomType": "家庭房",
+      "vehicle": "老猪皮卡",
+      "adults": 2,
+      "children": 3
+    },
+    {
+      "id": 9,
+      "name": "206",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "裕丰商务车",
+      "adults": 2,
+      "children": 0
+    },
+    {
+      "id": 10,
+      "name": "210",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "秦晓祥",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 11,
+      "name": "211",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "南天品质",
+      "adults": 2,
+      "children": 0
+    },
+    {
+      "id": 12,
+      "name": "215",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "邓总",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 13,
+      "name": "216",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "吴总",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 14,
+      "name": "202",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "向洋车行",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 15,
+      "name": "203",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "无限酷车",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 16,
+      "name": "208",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "爱优卡",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 17,
+      "name": "209",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "邱林海",
+      "adults": 2,
+      "children": 1
+    },
+    {
+      "id": 18,
+      "name": "212",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "付代田",
+      "adults": 1,
+      "children": 1
+    },
+    {
+      "id": 19,
+      "name": "213",
+      "floor": "2楼",
+      "roomType": "大床房",
+      "vehicle": "李梦羚",
+      "adults": 1,
+      "children": 1
+    },
+    {
+      "id": 20,
+      "name": "302",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "新华瓴名车",
+      "adults": 1,
+      "children": 1
+    },
+    {
+      "id": 21,
+      "name": "303",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "刘欢 王艳",
+      "adults": 1,
+      "children": 1
+    },
+    {
+      "id": 22,
+      "name": "305",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "英格玛车行",
+      "adults": 1,
+      "children": 1
+    },
+    {
+      "id": 23,
+      "name": "306",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "尚锦品质",
+      "adults": 1,
+      "children": 1
+    },
+    {
+      "id": 24,
+      "name": "308",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "卡尔曼名车",
+      "adults": 1,
+      "children": 0
+    },
+    {
+      "id": 25,
+      "name": "309",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "悦友名车",
+      "adults": 1,
+      "children": 0
+    },
+    {
+      "id": 26,
+      "name": "310",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "裕鸿至",
+      "adults": 1,
+      "children": 0
+    },
+    {
+      "id": 27,
+      "name": "311",
+      "floor": "3楼",
+      "roomType": "标间",
+      "vehicle": "劲越沃尔沃",
+      "adults": 1,
+      "children": 0
+    }
+  ],
+  "flows": [
+    {
+      "id": 1,
+      "taskId": 1,
+      "title": "房间分配",
+      "icon": "🏠",
+      "iconBg": "#3D5A80",
+      "owner": "商管部 · 截止 8月13日",
+      "steps": [
+        {
+          "title": "统计人数",
+          "sub": "各商户出行人员"
+        },
+        {
+          "title": "收集证件",
+          "sub": "统计身份证号码"
+        },
+        {
+          "title": "分配房间",
+          "sub": "按人数排房"
+        },
+        {
+          "title": "微信通知",
+          "sub": "推微信确认"
+        }
+      ],
+      "summary": "商户出行人员 → 证件信息 → 房间分配表 → 微信群通知",
+      "note": "需统计每家商户出行人员及身份证号码，分配后微信通知确认",
+      "alert": "",
+      "svg": ""
+    },
+    {
+      "id": 2,
+      "taskId": 2,
+      "title": "餐食",
+      "icon": "🍽️",
+      "iconBg": "#4A7C5E",
+      "owner": "王艳 · 截止 8月13日",
+      "steps": [],
+      "summary": "",
+      "note": "烧烤若需增加菜品，需提前2天联系民宿采购",
+      "alert": "",
+      "svg": "<svg viewBox=\"0 0 640 180\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"18\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#4A7C5E\"/>\n    <text x=\"83\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">确认桌数</text>\n    <text x=\"83\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">4桌·总人数</text><circle cx=\"32\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#4A7C5E\" stroke-width=\"2\"/>\n    <text x=\"32\" y=\"34\" text-anchor=\"middle\" fill=\"#4A7C5E\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">1</text><path d=\"M152 66 L174 66 M170 61 L180 66 L170 71\" stroke=\"#D0CCC4\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"184\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#4A7C5E\"/>\n    <text x=\"249\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">沟通民宿</text>\n    <text x=\"249\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">菜品·桌数</text><circle cx=\"198\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#4A7C5E\" stroke-width=\"2\"/>\n    <text x=\"198\" y=\"34\" text-anchor=\"middle\" fill=\"#4A7C5E\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">2</text><path d=\"M318 66 L340 66 M336 61 L346 66 L336 71\" stroke=\"#D0CCC4\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"350\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#4A7C5E\"/>\n    <text x=\"415\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">确认菜单</text>\n    <text x=\"415\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">含烧烤方案</text><circle cx=\"364\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#4A7C5E\" stroke-width=\"2\"/>\n    <text x=\"364\" y=\"34\" text-anchor=\"middle\" fill=\"#4A7C5E\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">3</text><path d=\"M484 66 L506 66 M502 61 L512 66 L502 71\" stroke=\"#C8843C\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"516\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#C8843C\"/>\n    <text x=\"581\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">加菜预警</text>\n    <text x=\"581\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">提前2天联系</text><circle cx=\"530\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#C8843C\" stroke-width=\"2\"/>\n    <text x=\"530\" y=\"34\" text-anchor=\"middle\" fill=\"#C8843C\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">4</text><rect x=\"516\" y=\"110\" width=\"130\" height=\"52\" rx=\"10\" fill=\"#FBF0E0\" stroke=\"#C8843C\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/><text x=\"581\" y=\"132\" text-anchor=\"middle\" fill=\"#C8843C\" font-size=\"11\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">加菜预警</text><text x=\"581\" y=\"148\" text-anchor=\"middle\" fill=\"#C8843C\" font-size=\"10\" font-family=\"system-ui,sans-serif\">烧烤增加菜品</text><text x=\"581\" y=\"160\" text-anchor=\"middle\" fill=\"#C8843C\" font-size=\"10\" font-family=\"system-ui,sans-serif\">需提前2天联系</text></svg>"
+    },
+    {
+      "id": 3,
+      "taskId": 3,
+      "title": "采买",
+      "icon": "🛒",
+      "iconBg": "#C8843C",
+      "owner": "王艳、刘欢 · 截止 8月13日",
+      "steps": [],
+      "summary": "",
+      "note": "白酒10斤 / 啤酒燕京U8 6箱×24 / 可乐12瓶2L / 椰子水8瓶1L / 唯怡9瓶1.45L / 辣椒面50袋",
+      "alert": "",
+      "svg": "<svg viewBox=\"0 0 640 290\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"12\" y=\"10\" width=\"192\" height=\"180\" rx=\"10\" fill=\"#FAF8F5\" stroke=\"#8E5E8C\" stroke-width=\"1\"/><rect x=\"12\" y=\"10\" width=\"192\" height=\"34\" rx=\"10\" fill=\"#8E5E8C\"/><rect x=\"12\" y=\"34\" width=\"192\" height=\"10\" fill=\"#8E5E8C\"/><text x=\"108\" y=\"32\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"13\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">酒水</text><rect x=\"24\" y=\"56\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#8E5E8C\" stroke-width=\"1.2\"/><text x=\"48\" y=\"68\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">白酒 10斤</text><rect x=\"24\" y=\"82\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#8E5E8C\" stroke-width=\"1.2\"/><text x=\"48\" y=\"94\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">啤酒 燕京U8 6箱×24</text><rect x=\"24\" y=\"108\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#8E5E8C\" stroke-width=\"1.2\"/><text x=\"48\" y=\"120\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">可乐 12瓶(2L)</text><rect x=\"24\" y=\"134\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#8E5E8C\" stroke-width=\"1.2\"/><text x=\"48\" y=\"146\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">椰子水 8瓶(1L)</text><rect x=\"24\" y=\"160\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#8E5E8C\" stroke-width=\"1.2\"/><text x=\"48\" y=\"172\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">唯怡 9瓶(1.45L)</text><rect x=\"220\" y=\"10\" width=\"192\" height=\"154\" rx=\"10\" fill=\"#FAF8F5\" stroke=\"#C8843C\" stroke-width=\"1\"/><rect x=\"220\" y=\"10\" width=\"192\" height=\"34\" rx=\"10\" fill=\"#C8843C\"/><rect x=\"220\" y=\"34\" width=\"192\" height=\"10\" fill=\"#C8843C\"/><text x=\"316\" y=\"32\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"13\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">食材物料</text><rect x=\"232\" y=\"56\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#C8843C\" stroke-width=\"1.2\"/><text x=\"256\" y=\"68\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">辣椒面 50袋</text><rect x=\"232\" y=\"82\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#C8843C\" stroke-width=\"1.2\"/><text x=\"256\" y=\"94\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">烧烤料 适量</text><rect x=\"232\" y=\"108\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#C8843C\" stroke-width=\"1.2\"/><text x=\"256\" y=\"120\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">零食 适量</text><rect x=\"232\" y=\"134\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#C8843C\" stroke-width=\"1.2\"/><text x=\"256\" y=\"146\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">桌游 适量</text><rect x=\"428\" y=\"10\" width=\"192\" height=\"102\" rx=\"10\" fill=\"#FAF8F5\" stroke=\"#3D5A80\" stroke-width=\"1\"/><rect x=\"428\" y=\"10\" width=\"192\" height=\"34\" rx=\"10\" fill=\"#3D5A80\"/><rect x=\"428\" y=\"34\" width=\"192\" height=\"10\" fill=\"#3D5A80\"/><text x=\"524\" y=\"32\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"13\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">横幅物料</text><rect x=\"440\" y=\"56\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#3D5A80\" stroke-width=\"1.2\"/><text x=\"464\" y=\"68\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">横幅 2幅</text><rect x=\"440\" y=\"82\" width=\"15\" height=\"15\" rx=\"4\" fill=\"#fff\" stroke=\"#3D5A80\" stroke-width=\"1.2\"/><text x=\"464\" y=\"94\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">拍照道具 5-10个</text><rect x=\"12\" y=\"258\" width=\"616\" height=\"24\" rx=\"12\" fill=\"#F8F1E2\"/><text x=\"320\" y=\"275\" text-anchor=\"middle\" fill=\"#B8924A\" font-size=\"11\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">共3类 11项 · 酒水5项 · 食材物料4项 · 横幅物料2项</text></svg>"
+    },
+    {
+      "id": 4,
+      "taskId": 4,
+      "title": "拍照",
+      "icon": "📷",
+      "iconBg": "#7B6BA8",
+      "owner": "待定 · 需尽快确认",
+      "steps": [
+        {
+          "title": "前期策划",
+          "sub": "拍摄方案·镜头"
+        },
+        {
+          "title": "现场拍摄",
+          "sub": "活动·合影"
+        },
+        {
+          "title": "后期剪辑",
+          "sub": "视频剪辑"
+        },
+        {
+          "title": "视频宣发",
+          "sub": "公众号/视频号"
+        }
+      ],
+      "summary": "",
+      "note": "",
+      "alert": "负责人待定 — 距出行仅剩4天，请尽快安排",
+      "svg": "<svg viewBox=\"0 0 640 160\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"18\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#7B6BA8\"/>\n    <text x=\"83\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">前期策划</text>\n    <text x=\"83\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">拍摄方案·镜头</text><circle cx=\"32\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#7B6BA8\" stroke-width=\"2\"/>\n    <text x=\"32\" y=\"34\" text-anchor=\"middle\" fill=\"#7B6BA8\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">1</text><path d=\"M152 66 L174 66 M170 61 L180 66 L170 71\" stroke=\"#D0CCC4\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"184\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#7B6BA8\"/>\n    <text x=\"249\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">现场拍摄</text>\n    <text x=\"249\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">活动·合影</text><circle cx=\"198\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#7B6BA8\" stroke-width=\"2\"/>\n    <text x=\"198\" y=\"34\" text-anchor=\"middle\" fill=\"#7B6BA8\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">2</text><path d=\"M318 66 L340 66 M336 61 L346 66 L336 71\" stroke=\"#D0CCC4\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"350\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#7B6BA8\"/>\n    <text x=\"415\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">后期剪辑</text>\n    <text x=\"415\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">视频剪辑</text><circle cx=\"364\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#7B6BA8\" stroke-width=\"2\"/>\n    <text x=\"364\" y=\"34\" text-anchor=\"middle\" fill=\"#7B6BA8\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">3</text><path d=\"M484 66 L506 66 M502 61 L512 66 L502 71\" stroke=\"#D0CCC4\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"516\" y=\"38\" width=\"130\" height=\"56\" rx=\"10\" fill=\"#7B6BA8\"/>\n    <text x=\"581\" y=\"62\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"14\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">视频宣发</text>\n    <text x=\"581\" y=\"80\" text-anchor=\"middle\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">公众号/视频号</text><circle cx=\"530\" cy=\"30\" r=\"12\" fill=\"#fff\" stroke=\"#7B6BA8\" stroke-width=\"2\"/>\n    <text x=\"530\" y=\"34\" text-anchor=\"middle\" fill=\"#7B6BA8\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">4</text><rect x=\"18\" y=\"108\" width=\"604\" height=\"40\" rx=\"8\" fill=\"#F9EBED\" stroke=\"#8B2635\" stroke-width=\"1\"/><circle cx=\"44\" cy=\"128\" r=\"9\" fill=\"#8B2635\"/><text x=\"44\" y=\"132\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"12\" font-weight=\"700\" font-family=\"system-ui,sans-serif\">!</text><text x=\"62\" y=\"125\" fill=\"#8B2635\" font-size=\"12\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">负责人待定</text><text x=\"62\" y=\"140\" fill=\"#8B2635\" font-size=\"11\" font-family=\"system-ui,sans-serif\">距出行仅剩4天，请尽快安排拍摄负责人</text></svg>"
+    },
+    {
+      "id": 5,
+      "taskId": 5,
+      "title": "横幅制作",
+      "icon": "🎨",
+      "iconBg": "#8B2635",
+      "owner": "刘欢 · 截止 8月13日",
+      "steps": [
+        {
+          "title": "确认文案",
+          "sub": "横幅内容/口号"
+        },
+        {
+          "title": "对接策划",
+          "sub": "制作横幅+道具"
+        },
+        {
+          "title": "验收物料",
+          "sub": "横幅2·道具5-10"
+        },
+        {
+          "title": "运输现场",
+          "sub": "出行当天携带"
+        }
+      ],
+      "summary": "文案确认 → 制作对接 → 物料验收 → 当天携带",
+      "note": "拍照人员需与横幅物料协调时间，横幅2幅+拍照道具5-10个",
+      "alert": "",
+      "svg": ""
+    },
+    {
+      "id": 6,
+      "taskId": 6,
+      "title": "拉群",
+      "icon": "💬",
+      "iconBg": "#3D5A80",
+      "owner": "刘欢 · 截止 8月14日（出行前一天）",
+      "steps": [
+        {
+          "title": "整理名单",
+          "sub": "出行商户名单"
+        },
+        {
+          "title": "拉群",
+          "sub": "出行前一天建群"
+        },
+        {
+          "title": "编辑信息",
+          "sub": "时间/地点/注意"
+        },
+        {
+          "title": "发结束语",
+          "sub": "群内确认收尾"
+        }
+      ],
+      "summary": "8月14日（出行前一天）执行 · 确保所有商户进群",
+      "note": "出行前一天将所有出行商户拉群，编辑出行信息（时间/地点/注意事项）及结束语",
+      "alert": "",
+      "svg": ""
+    },
+    {
+      "id": 7,
+      "taskId": 7,
+      "title": "座位安排",
+      "icon": "🪑",
+      "iconBg": "#4A7C5E",
+      "owner": "王艳、刘欢 · 4桌按商户分组",
+      "steps": [],
+      "summary": "",
+      "note": "初步安排，出行当天根据实际上座情况可微调",
+      "alert": "",
+      "svg": "<svg viewBox=\"0 0 640 280\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"12\" y=\"10\" width=\"296\" height=\"118\" rx=\"10\" fill=\"#FAF8F5\" stroke=\"#3D5A80\" stroke-width=\"1\"/><rect x=\"12\" y=\"10\" width=\"296\" height=\"30\" rx=\"10\" fill=\"#3D5A80\"/><rect x=\"12\" y=\"30\" width=\"296\" height=\"10\" fill=\"#3D5A80\"/><text x=\"28\" y=\"30\" fill=\"#fff\" font-size=\"13\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">第1桌</text><text x=\"292\" y=\"30\" text-anchor=\"end\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">5家商户</text><circle cx=\"32\" cy=\"54\" r=\"3\" fill=\"#3D5A80\"/><text x=\"42\" y=\"58\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">神电新能源</text><circle cx=\"32\" cy=\"70\" r=\"3\" fill=\"#3D5A80\"/><text x=\"42\" y=\"74\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">向洋</text><circle cx=\"32\" cy=\"86\" r=\"3\" fill=\"#3D5A80\"/><text x=\"42\" y=\"90\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">林友豪</text><circle cx=\"32\" cy=\"102\" r=\"3\" fill=\"#3D5A80\"/><text x=\"42\" y=\"106\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">英格玛</text><circle cx=\"32\" cy=\"118\" r=\"3\" fill=\"#3D5A80\"/><text x=\"42\" y=\"122\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">悦友</text><rect x=\"332\" y=\"10\" width=\"296\" height=\"118\" rx=\"10\" fill=\"#FAF8F5\" stroke=\"#4A7C5E\" stroke-width=\"1\"/><rect x=\"332\" y=\"10\" width=\"296\" height=\"30\" rx=\"10\" fill=\"#4A7C5E\"/><rect x=\"332\" y=\"30\" width=\"296\" height=\"10\" fill=\"#4A7C5E\"/><text x=\"348\" y=\"30\" fill=\"#fff\" font-size=\"13\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">第2桌</text><text x=\"612\" y=\"30\" text-anchor=\"end\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">4家商户</text><circle cx=\"352\" cy=\"54\" r=\"3\" fill=\"#4A7C5E\"/><text x=\"362\" y=\"58\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">尚锦</text><circle cx=\"352\" cy=\"70\" r=\"3\" fill=\"#4A7C5E\"/><text x=\"362\" y=\"74\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">裕丰</text><circle cx=\"352\" cy=\"86\" r=\"3\" fill=\"#4A7C5E\"/><text x=\"362\" y=\"90\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">南天</text><circle cx=\"352\" cy=\"102\" r=\"3\" fill=\"#4A7C5E\"/><text x=\"362\" y=\"106\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">劲越</text><rect x=\"12\" y=\"142\" width=\"296\" height=\"118\" rx=\"10\" fill=\"#FAF8F5\" stroke=\"#7B6BA8\" stroke-width=\"1\"/><rect x=\"12\" y=\"142\" width=\"296\" height=\"30\" rx=\"10\" fill=\"#7B6BA8\"/><rect x=\"12\" y=\"162\" width=\"296\" height=\"10\" fill=\"#7B6BA8\"/><text x=\"28\" y=\"162\" fill=\"#fff\" font-size=\"13\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">第3桌</text><text x=\"292\" y=\"162\" text-anchor=\"end\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">4家商户</text><circle cx=\"32\" cy=\"186\" r=\"3\" fill=\"#7B6BA8\"/><text x=\"42\" y=\"190\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">捷电</text><circle cx=\"32\" cy=\"202\" r=\"3\" fill=\"#7B6BA8\"/><text x=\"42\" y=\"206\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">佳驹</text><circle cx=\"32\" cy=\"218\" r=\"3\" fill=\"#7B6BA8\"/><text x=\"42\" y=\"222\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">弘海达</text><circle cx=\"32\" cy=\"234\" r=\"3\" fill=\"#7B6BA8\"/><text x=\"42\" y=\"238\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">无限酷车</text><rect x=\"332\" y=\"142\" width=\"296\" height=\"118\" rx=\"10\" fill=\"#FAF8F5\" stroke=\"#8B2635\" stroke-width=\"1\"/><rect x=\"332\" y=\"142\" width=\"296\" height=\"30\" rx=\"10\" fill=\"#8B2635\"/><rect x=\"332\" y=\"162\" width=\"296\" height=\"10\" fill=\"#8B2635\"/><text x=\"348\" y=\"162\" fill=\"#fff\" font-size=\"13\" font-weight=\"600\" font-family=\"system-ui,sans-serif\">第4桌</text><text x=\"612\" y=\"162\" text-anchor=\"end\" fill=\"rgba(255,255,255,.7)\" font-size=\"11\" font-family=\"system-ui,sans-serif\">4家商户</text><circle cx=\"352\" cy=\"186\" r=\"3\" fill=\"#8B2635\"/><text x=\"362\" y=\"190\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">宜车</text><circle cx=\"352\" cy=\"202\" r=\"3\" fill=\"#8B2635\"/><text x=\"362\" y=\"206\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">老猪皮卡</text><circle cx=\"352\" cy=\"218\" r=\"3\" fill=\"#8B2635\"/><text x=\"362\" y=\"222\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">卡尔曼</text><circle cx=\"352\" cy=\"234\" r=\"3\" fill=\"#8B2635\"/><text x=\"362\" y=\"238\" fill=\"#3A3B45\" font-size=\"11\" font-family=\"system-ui,sans-serif\">裕鸿至</text><rect x=\"12\" y=\"254\" width=\"616\" height=\"18\" rx=\"9\" fill=\"#EAF3EC\"/><text x=\"320\" y=\"267\" text-anchor=\"middle\" fill=\"#4A7C5E\" font-size=\"11\" font-weight=\"500\" font-family=\"system-ui,sans-serif\">初步安排，出行当天根据实际上座情况可微调</text></svg>"
+    }
   ]
 }
