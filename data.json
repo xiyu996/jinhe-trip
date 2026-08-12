@@ -86,7 +86,7 @@
   "hike": [
     {
       "id": 1,
-      "name": "A路线",
+      "name": "A路线（大环线）",
       "summary": {
         "distance": "9.7km",
         "time": "4-6小时",
@@ -120,7 +120,7 @@
     },
     {
       "id": 2,
-      "name": "B路线",
+      "name": "B路线（小环线）",
       "summary": {
         "distance": "3.8km",
         "time": "1-2小时",
