@@ -339,6 +339,21 @@
           "name": "唯怡",
           "qty": "9瓶（1.45L装）",
           "checked": false
+        },
+        {
+          "name": "葡萄糖",
+          "qty": "2盒",
+          "checked": false
+        },
+        {
+          "name": "海王金樽（解酒）",
+          "qty": "8瓶",
+          "checked": false
+        },
+        {
+          "name": "迈胜 半马包",
+          "qty": "12*7",
+          "checked": false
         }
       ]
     },
