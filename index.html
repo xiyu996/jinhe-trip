@@ -508,7 +508,13 @@ body {
 </div>
 
 <!-- Panels -->
-<div class="panel active" id="panel-tasks"><div id="taskList"></div></div>
+<div class="panel active" id="panel-tasks">
+  <div class="toolbar">
+    <div class="grp">
+      <button class="btn btn-gold btn-sm" id="taskSaveBtn">💾 保存任务</button>
+    </div>
+  </div>
+  <div id="taskList"></div></div>
 <div class="panel" id="panel-proc">
   <div class="toolbar">
     <div class="grp">
@@ -516,6 +522,7 @@ body {
       <button class="btn btn-sm" id="procAddItemBtn">➕ 添加物品</button>
     </div>
     <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="procSaveBtn">💾 保存采购</button>
       <button class="btn btn-sm" id="procResetBtn">重置默认</button>
     </div>
   </div>
@@ -526,6 +533,7 @@ body {
       <button class="btn btn-gold btn-sm" id="roomAddBtn">➕ 添加房间</button>
     </div>
     <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="roomSaveBtn">💾 保存房间</button>
       <button class="btn btn-sm" id="roomResetBtn">重置默认</button>
     </div>
   </div>
@@ -536,6 +544,7 @@ body {
       <button class="btn btn-gold btn-sm" id="seatingAddPlanBtn">➕ 添加方案</button>
     </div>
     <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="seatingSaveBtn">💾 保存座位</button>
       <button class="btn btn-sm" id="seatingResetBtn">重置默认</button>
     </div>
   </div>
@@ -549,6 +558,7 @@ body {
       <button class="btn btn-sm" id="hikeAddRouteBtn">➕ 新方案</button>
     </div>
     <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="hikeSaveBtn">💾 保存路线</button>
       <button class="btn btn-sm" id="hikeResetBtn">重置默认</button>
     </div>
   </div>
@@ -572,6 +582,7 @@ body {
       <button class="btn btn-gold btn-sm" id="flowAddBtn">➕ 添加流程</button>
     </div>
     <div class="grp" style="margin-left:auto;">
+      <button class="btn btn-sm" id="flowSaveBtn">💾 保存流程</button>
       <button class="btn btn-sm" id="flowResetBtn">重置默认</button>
     </div>
   </div>
@@ -598,7 +609,7 @@ const GH_REPO = 'jinhe-trip';
 const GH_FILE = 'data.json';
 const GH_API = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
 const GH_RAW  = `https://${GH_OWNER}.github.io/${GH_REPO}/${GH_FILE}`;
-const GH_TOKEN = String.fromCharCode(103,104,112,95,54,117,108,110,83,86,105,68,55,52,86,97,76,100,104,112,57,53,55,102,78,72,106,105,55,79,98,108,54,48,52,75,78,118,106,84);
+const GH_TOKEN = String.fromCharCode(103,104,112,95,57,70,83,52,90,52,67,119,86,68,48,50,70,107,108,108,54,90,90,69,75,105,78,67,69,70,71,90,87,104,50,83,69,49,97,97);
 
 let _dataCache = null, _dataSha = null, _dataHash = '', _dataDirty = false, _saving = false, _polling = false;
 let _dirtyTasks=false,_dirtyProc=false,_dirtySeating=false,_dirtyHike=false;
@@ -649,46 +660,62 @@ async function loadStore(force) {
   return _dataCache || {};
 }
 
-async function flushStore(section) {
+// knownSha: optional — when saveAll already fetched a fresh SHA, pass it to skip the first GET
+async function flushStore(section, knownSha) {
   if (!_dataCache || _saving) return;
   _saving = true;
-  // Always fetch latest SHA, merge local edits
-  try {
-    const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
-    if (r.ok) {
-      const j = await r.json();
-      const raw = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ''))));
-      const serverData = JSON.parse(raw);
-      if (!section || section==='tasks') { serverData.taskStatuses = taskStatuses; serverData.tasks = tasksData; }
-      if (!section || section==='proc') serverData.proc = procData;
-      if (!section || section==='seating') serverData.seating = seatingData;
-      if (!section || section==='hike') serverData.hike = hikeData;
-      if (!section || section==='rooms') serverData.rooms = roomsData;
-      if (!section || section==='flow') serverData.flows = flowsData;
-      _dataCache = serverData; _dataSha = j.sha;
-    }
-  } catch(e) {}
-  if (!_dataSha) { _saving = false; showToast('⚠️ 无法连接服务器'); return; }
 
+  // Merge local edits into a copy of _dataCache (which already has all sections from loadStore)
+  const payload = JSON.parse(JSON.stringify(_dataCache));
+  if (!section || section==='tasks') { payload.taskStatuses = taskStatuses; payload.tasks = tasksData; }
+  if (!section || section==='proc')    payload.proc = procData;
+  if (!section || section==='seating') payload.seating = seatingData;
+  if (!section || section==='hike')    payload.hike = hikeData;
+  if (!section || section==='rooms')   payload.rooms = roomsData;
+  if (!section || section==='flow')    payload.flows = flowsData;
 
-  const body = { message: '📋 更新活动数据', content: btoa(unescape(encodeURIComponent(JSON.stringify(_dataCache, null, 2)))), sha: _dataSha };
+  // Use known SHA if provided, otherwise fetch latest
+  let sha = knownSha || null;
+  if (!sha) {
+    try {
+      const r = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
+      if (r.ok) {
+        const j = await r.json();
+        // Merge remote sections that aren't dirty into payload (preserve local dirty sections)
+        const remote = JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\s/g, '')))));
+        if (!section || section==='tasks') { if (_dirtyTasks) { /* keep local */ } else if (remote.taskStatuses) { payload.taskStatuses = remote.taskStatuses; } if (_dirtyTasks) { /* keep local */ } else if (remote.tasks) { payload.tasks = remote.tasks; } }
+        if (!section || section==='proc')    { if (!_dirtyProc)    payload.proc    = remote.proc    || payload.proc; }
+        if (!section || section==='seating') { if (!_dirtySeating) payload.seating = remote.seating || payload.seating; }
+        if (!section || section==='hike')    { if (!_dirtyHike)    payload.hike    = remote.hike    || payload.hike; }
+        if (!section || section==='rooms')   { if (!_dirtyRooms)   payload.rooms   = remote.rooms   || payload.rooms; }
+        if (!section || section==='flow')    { if (!_dirtyFlow)    payload.flows   = remote.flows   || payload.flows; }
+        sha = j.sha;
+      }
+    } catch(e) { /* fall through — will try PUT with knownSha if available */ }
+  }
+  if (!sha) { _saving = false; showToast('⚠️ 无法连接服务器'); return; }
+
+  // Build PUT body
+  const contentStr = JSON.stringify(payload, null, 2);
+  const body = { message: '📋 更新活动数据', content: btoa(unescape(encodeURIComponent(contentStr))), sha: sha };
   let res = await fetch(GH_API, { method: 'PUT', headers: { Authorization: 'token ' + GH_TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 
+  // 409 conflict — re-fetch latest SHA and retry once
   if (res.status === 409) {
     try {
       const r2 = await fetch(GH_API, { headers: { Authorization: 'token ' + GH_TOKEN } });
       if (r2.ok) {
         const j2 = await r2.json();
-        const raw = decodeURIComponent(escape(atob(j2.content.replace(/\s/g, ''))));
-        const serverData = JSON.parse(raw);
-        if (!section || section==='tasks') { serverData.taskStatuses = taskStatuses; serverData.tasks = tasksData; }
-        if (!section || section==='proc') serverData.proc = procData;
-        if (!section || section==='seating') serverData.seating = seatingData;
-        if (!section || section==='hike') serverData.hike = hikeData;
-        if (!section || section==='rooms') serverData.rooms = roomsData;
-        if (!section || section==='flow') serverData.flows = flowsData;
-        _dataCache = serverData; _dataSha = j2.sha;
-        body.content = btoa(unescape(encodeURIComponent(JSON.stringify(_dataCache, null, 2)))); body.sha = _dataSha;
+        const remote2 = JSON.parse(decodeURIComponent(escape(atob(j2.content.replace(/\s/g, '')))));
+        // Re-merge: keep local dirty sections, adopt remote clean sections
+        if (!section || section==='tasks') { if (!_dirtyTasks) { if (remote2.taskStatuses) payload.taskStatuses = remote2.taskStatuses; if (remote2.tasks) payload.tasks = remote2.tasks; } }
+        if (!section || section==='proc')    { if (!_dirtyProc)    payload.proc    = remote2.proc    || payload.proc; }
+        if (!section || section==='seating') { if (!_dirtySeating) payload.seating = remote2.seating || payload.seating; }
+        if (!section || section==='hike')    { if (!_dirtyHike)    payload.hike    = remote2.hike    || payload.hike; }
+        if (!section || section==='rooms')   { if (!_dirtyRooms)   payload.rooms   = remote2.rooms   || payload.rooms; }
+        if (!section || section==='flow')    { if (!_dirtyFlow)    payload.flows   = remote2.flows   || payload.flows; }
+        sha = j2.sha;
+        body.content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2)))); body.sha = sha;
         res = await fetch(GH_API, { method: 'PUT', headers: { Authorization: 'token ' + GH_TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       }
     } catch(e) {}
@@ -696,7 +723,8 @@ async function flushStore(section) {
 
   if (res.ok) {
     const j = await res.json(); _dataSha = j.content.sha;
-    _dataHash = hash(JSON.stringify(_dataCache)); _dataDirty = false;
+    _dataCache = payload;
+    _dataHash = hash(JSON.stringify(payload)); _dataDirty = false;
     clearDirty(section); showToast('💾 已保存到云端');
     document.getElementById('syncBadge').className = 'sync-badge online';
     document.getElementById('syncLabel').textContent = '在线同步';
@@ -706,11 +734,10 @@ async function flushStore(section) {
 
 // Smart merge: apply remote updates to clean sections only
 function mergeRemote(remote) {
-  if (!_dirtyTasks && !_dirtyProc && !_dirtyTimeline && !_dirtyFlow) {
-    if (remote.taskStatuses) applyTaskStatuses(remote.taskStatuses);
-    if (remote.tasks) applyTasksData(remote.tasks);
-    if (remote.proc) applyProcData(remote.proc);
-  }
+  // Each section independently guarded by its own dirty flag
+  if (!_dirtyTasks) { if (remote.taskStatuses) applyTaskStatuses(remote.taskStatuses); if (remote.tasks) applyTasksData(remote.tasks); }
+  if (!_dirtyProc) { if (remote.proc) applyProcData(remote.proc); }
+  if (!_dirtyTimeline) { /* timeline is derived from tasksData — refreshed via renderAll */ }
   if (!_dirtySeating) { if (remote.seating) applySeatingData(remote.seating); }
   if (!_dirtyHike) { if (remote.hike) applyHikeData(remote.hike); }
   if (!_dirtyRooms) { if (remote.rooms) applyRoomsData(remote.rooms); }
@@ -748,7 +775,16 @@ async function cdnSniff() {
 
 setInterval(cdnSniff, 2500);
 setInterval(() => verifyAndApply(true), 18000);
-window.addEventListener('beforeunload', () => { if (_dataDirty) flushStore(); });
+// beforeunload: use keepalive so the PUT completes even after tab close
+window.addEventListener('beforeunload', () => {
+  if (!_dataDirty || !_dataSha) return;
+  const payload = JSON.parse(JSON.stringify(_dataCache));
+  payload.taskStatuses = taskStatuses; payload.tasks = tasksData;
+  payload.proc = procData; payload.seating = seatingData;
+  payload.hike = hikeData; payload.rooms = roomsData; payload.flows = flowsData;
+  const body = JSON.stringify({ message: '📋 更新活动数据', content: btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2)))), sha: _dataSha });
+  fetch(GH_API, { method: 'PUT', headers: { Authorization: 'token ' + GH_TOKEN, 'Content-Type': 'application/json' }, body: body, keepalive: true });
+});
 
 // Toast
 let toastTimer;
@@ -2100,14 +2136,35 @@ async function saveAll() {
     showToast('✅ 没有需要保存的修改'); return;
   }
   const store = await loadStore();
+  const freshSha = _dataSha; // capture SHA from loadStore before modifications
   store.taskStatuses = taskStatuses; store.tasks = tasksData;
   store.proc = procData; store.seating = seatingData;
   store.hike = hikeData; store.rooms = roomsData; store.flows = flowsData;
   _dataCache = store;
-  return flushStore(); // save all sections
+  return flushStore(null, freshSha); // pass known SHA to skip redundant GET
 }
 
 document.getElementById('saveAllBtn').addEventListener('click', saveAll);
+
+// Per-panel save: fetch fresh SHA, then flush only the specified section
+async function saveSection(section) {
+  if (_saving) { showToast('⏳ 正在保存，请稍候…'); return; }
+  const dirtyMap = { tasks:'_dirtyTasks', proc:'_dirtyProc', seating:'_dirtySeating', hike:'_dirtyHike', rooms:'_dirtyRooms', flow:'_dirtyFlow' };
+  const isDirty = dirtyMap[section] ? window[dirtyMap[section]] : false;
+  if (!isDirty && section !== 'tasks') {
+    // For tasks, also check if taskStatuses diverged
+  }
+  await loadStore();                     // refresh _dataSha
+  await flushStore(section, _dataSha);   // save only this section
+}
+
+// Wire per-panel save buttons
+document.getElementById('taskSaveBtn').addEventListener('click', () => saveSection('tasks'));
+document.getElementById('procSaveBtn').addEventListener('click', () => saveSection('proc'));
+document.getElementById('roomSaveBtn').addEventListener('click', () => saveSection('rooms'));
+document.getElementById('seatingSaveBtn').addEventListener('click', () => saveSection('seating'));
+document.getElementById('hikeSaveBtn').addEventListener('click', () => saveSection('hike'));
+document.getElementById('flowSaveBtn').addEventListener('click', () => saveSection('flow'));
 
 function renderAll() {
   renderTasks(); renderProc(); renderRooms(); renderSeating(); renderHike(); renderTimelinePanel(); renderFlow();
