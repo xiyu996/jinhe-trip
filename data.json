@@ -661,8 +661,8 @@
       "floor": "2楼",
       "roomType": "大床房",
       "vehicle": "邓总",
-      "adults": 2,
-      "children": 1
+      "adults": 1,
+      "children": 0
     },
     {
       "id": 13,
@@ -670,8 +670,8 @@
       "floor": "2楼",
       "roomType": "大床房",
       "vehicle": "吴总",
-      "adults": 2,
-      "children": 1
+      "adults": 1,
+      "children": 0
     },
     {
       "id": 14,
@@ -679,8 +679,8 @@
       "floor": "2楼",
       "roomType": "大床房",
       "vehicle": "向洋车行",
-      "adults": 2,
-      "children": 1
+      "adults": 1,
+      "children": 0
     },
     {
       "id": 15,
@@ -689,7 +689,7 @@
       "roomType": "大床房",
       "vehicle": "无限酷车",
       "adults": 2,
-      "children": 1
+      "children": 0
     },
     {
       "id": 16,
@@ -697,8 +697,8 @@
       "floor": "2楼",
       "roomType": "大床房",
       "vehicle": "爱优卡",
-      "adults": 2,
-      "children": 1
+      "adults": 1,
+      "children": 0
     },
     {
       "id": 17,
@@ -706,8 +706,8 @@
       "floor": "2楼",
       "roomType": "大床房",
       "vehicle": "邱林海",
-      "adults": 2,
-      "children": 1
+      "adults": 1,
+      "children": 0
     },
     {
       "id": 18,
@@ -715,7 +715,7 @@
       "floor": "2楼",
       "roomType": "大床房",
       "vehicle": "付代田",
-      "adults": 1,
+      "adults": 2,
       "children": 1
     },
     {
@@ -725,7 +725,7 @@
       "roomType": "大床房",
       "vehicle": "李梦羚",
       "adults": 1,
-      "children": 1
+      "children": 0
     },
     {
       "id": 20,
@@ -733,8 +733,8 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "新华瓴名车",
-      "adults": 1,
-      "children": 1
+      "adults": 2,
+      "children": 2
     },
     {
       "id": 21,
@@ -742,8 +742,8 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "刘欢 王艳",
-      "adults": 1,
-      "children": 1
+      "adults": 2,
+      "children": 0
     },
     {
       "id": 22,
@@ -751,8 +751,8 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "英格玛车行",
-      "adults": 1,
-      "children": 1
+      "adults": 2,
+      "children": 2
     },
     {
       "id": 23,
@@ -760,8 +760,8 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "尚锦品质",
-      "adults": 1,
-      "children": 1
+      "adults": 2,
+      "children": 0
     },
     {
       "id": 24,
@@ -779,7 +779,7 @@
       "roomType": "标间",
       "vehicle": "悦友名车",
       "adults": 2,
-      "children": 0
+      "children": 2
     },
     {
       "id": 26,
@@ -787,8 +787,8 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "裕鸿至",
-      "adults": 1,
-      "children": 0
+      "adults": 2,
+      "children": 1
     },
     {
       "id": 27,
@@ -796,8 +796,8 @@
       "floor": "3楼",
       "roomType": "标间",
       "vehicle": "劲越沃尔沃",
-      "adults": 1,
-      "children": 0
+      "adults": 2,
+      "children": 2
     }
   ],
   "flows": [
