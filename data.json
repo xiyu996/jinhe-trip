@@ -102,8 +102,8 @@
       "waypoints": [
         {
           "type": "start",
-          "time": "10:00",
-          "title": "出发",
+          "time": "09:30",
+          "title": "民宿出发",
           "desc": "前山门→鱼鳞坝→白泽瀑（分叉）→得月亭→天虞之峰（制高点观景台）→森林小筑→后山门",
           "dist": "0 km",
           "badges": []
@@ -170,8 +170,8 @@
       "waypoints": [
         {
           "type": "start",
-          "time": "08:00",
-          "title": "起点",
+          "time": "9:30-11:30",
+          "title": "自由活动",
           "desc": "",
           "dist": "0 km",
           "badges": []
@@ -179,8 +179,8 @@
         {
           "type": "end",
           "time": "12:00",
-          "title": "终点",
-          "desc": "",
+          "title": "午餐",
+          "desc": "民宿用餐后返程",
           "dist": "0 km",
           "badges": []
         }
