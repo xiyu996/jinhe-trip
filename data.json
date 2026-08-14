@@ -370,7 +370,7 @@
         {
           "name": "零食",
           "qty": "适量",
-          "checked": false
+          "checked": true
         },
         {
           "name": "桌游",
@@ -392,7 +392,7 @@
         {
           "name": "拍照道具",
           "qty": "5-10个",
-          "checked": false
+          "checked": true
         }
       ]
     }
