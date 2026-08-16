@@ -581,8 +581,8 @@
       "floor": "1楼",
       "roomType": "标间",
       "vehicle": "宜车品质车行",
-      "adults": 2,
-      "children": 1
+      "adults": 0,
+      "children": 0
     },
     {
       "id": 3,
